@@ -1,15 +1,15 @@
 /* Layout: yopishqoq appbar (logo + bo'limlar + sozlamalar), ostida bo'lim sahifalari (raqamlangan qadamlar),
    sahifa kontenti va oldingi/keyingi navigatsiya.
-   Rang g'oyasi: rentgen plyonkasi — sovuq ko'kish neytral, firuza aksent, optimal yo'l uchun kahrabo.
+   Rang g'oyasi: rentgen plyonkasi foni (sovuq ko'kish-qora) + indigo aksent, optimal yo'l uchun kahrabo.
    Asosiy mavzu — qorong'i (index.html). Kontrast WCAG bo'yicha: matn ≥ 4.5:1, izohlar ≥ 3.5:1, grafik ustunlari ≥ 3:1. */
 :root{
   --bg:#f2f5f7; --surface:#ffffff; --surface-2:#eef3f5; --line:#d6e0e5; --line-2:#e5ecef;
   --fg:#13202a; --fg-2:#475866; --fg-3:#6b7c88;
-  --accent:#0b6e79; --accent-2:#0c7d89; --accent-soft:#dff1f3; --accent-fg:#ffffff;
+  --accent:#4352c9; --accent-2:#5463db; --accent-soft:#e6e9fb; --accent-fg:#ffffff;
   --opt:#a35406; --opt-soft:#fdf1e3;
   --good:#1f7a4a; --good-soft:#dcefe3; --bad:#b4372f; --bad-soft:#fbe6e3;
-  --buy:#0b6e79; --rep:#7790a0; --sell:#c46f1c;
-  --glow:rgba(11,110,121,.10);
+  --buy:#4352c9; --rep:#7790a0; --sell:#c46f1c;
+  --glow:rgba(67,82,201,.10);
   --shadow:0 1px 2px rgba(16,32,42,.05), 0 6px 20px -10px rgba(16,32,42,.14);
   --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
   --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -20,21 +20,21 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0b1218; --surface:#121c24; --surface-2:#18252f; --line:#24343f; --line-2:#1d2b35;
   --fg:#e4ecf1; --fg-2:#a3b3bf; --fg-3:#73858f;
-  --accent:#4fb8c3; --accent-2:#6fcbd4; --accent-soft:#143840; --accent-fg:#05161a;
+  --accent:#8b9dff; --accent-2:#a7b4ff; --accent-soft:#212a4e; --accent-fg:#0b0e24;
   --opt:#f0a24a; --opt-soft:#3a2a15;
   --good:#5cc08a; --good-soft:#15301f; --bad:#e8776e; --bad-soft:#3a1c19;
-  --buy:#4fb8c3; --rep:#5f7886; --sell:#f0a24a;
-  --glow:rgba(79,184,195,.10);
+  --buy:#8b9dff; --rep:#5f7886; --sell:#f0a24a;
+  --glow:rgba(139,157,255,.12);
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0b1218; --surface:#121c24; --surface-2:#18252f; --line:#24343f; --line-2:#1d2b35;
   --fg:#e4ecf1; --fg-2:#a3b3bf; --fg-3:#73858f;
-  --accent:#4fb8c3; --accent-2:#6fcbd4; --accent-soft:#143840; --accent-fg:#05161a;
+  --accent:#8b9dff; --accent-2:#a7b4ff; --accent-soft:#212a4e; --accent-fg:#0b0e24;
   --opt:#f0a24a; --opt-soft:#3a2a15;
   --good:#5cc08a; --good-soft:#15301f; --bad:#e8776e; --bad-soft:#3a1c19;
-  --buy:#4fb8c3; --rep:#5f7886; --sell:#f0a24a;
-  --glow:rgba(79,184,195,.10);
+  --buy:#8b9dff; --rep:#5f7886; --sell:#f0a24a;
+  --glow:rgba(139,157,255,.12);
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
   color-scheme:dark}
 :root[data-theme="light"]{color-scheme:light}
