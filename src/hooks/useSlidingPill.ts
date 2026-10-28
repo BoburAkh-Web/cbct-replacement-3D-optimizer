@@ -22,6 +22,9 @@ export function useSlidingPill<T extends HTMLElement>(deps: unknown[]) {
         // Birinchi joylashuv animatsiyasiz — pill chapdan "uchib" kelmasin
         transition: placed.current ? undefined : "none",
       });
+      // Tor ekranda qator gorizontal suriladi — faol havola o'rtaga keltiriladi
+      if (nav.scrollWidth > nav.clientWidth)
+        nav.scrollTo({ left: a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2, behavior: placed.current ? "smooth" : "auto" });
       placed.current = true;
     };
     place();

@@ -87,19 +87,20 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
             </div>
             <YearChart rows={years} />
             <div className="tw">
-              <table>
+              <table className="sticky1">
                 <thead>
                   <tr>
-                    <th className="n">{t.thYear}</th><th className="l">{t.thDecision}</th><th className="n">{t.thAge}</th><th className="n">{t.thBuy}</th>
+                    <th className="n">{t.thYear}</th><th className="l hide-m">{t.thDecision}</th><th className="n hide-m">{t.thAge}</th><th className="n">{t.thBuy}</th>
                     <th className="n">{t.thRep}</th><th className="n">{t.thSalv}</th><th className="n">{t.thNet}</th><th className="n">{t.thCum}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {years.map((r) => (
                     <tr key={r.year}>
-                      <td className="n">{r.year}</td>
-                      <td className="l">{r.isPurchase ? <span className="tag buy">{t.tagNew}</span> : <span className="tag rep">{t.tagRep}</span>}</td>
-                      <td className="n">{r.age}</td>
+                      {/* Telefonda "Qaror" ustuni yashiriladi — yangi qism yili chap chiziq bilan belgilanadi */}
+                      <td className={`n ${r.isPurchase ? "buy" : ""}`} title={r.isPurchase ? t.tagNew : t.tagRep}>{r.year}</td>
+                      <td className="l hide-m">{r.isPurchase ? <span className="tag buy">{t.tagNew}</span> : <span className="tag rep">{t.tagRep}</span>}</td>
+                      <td className="n hide-m">{r.age}</td>
                       <td className={`n ${r.buy ? "" : "dim"}`}>{r.buy ? fmt(r.buy) : "—"}</td>
                       <td className="n">{fmt(r.repair)}</td>
                       <td className={`n ${r.salvage ? "" : "dim"}`}>{r.salvage ? `−${fmt(r.salvage)}` : "—"}</td>
@@ -110,7 +111,9 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td className="l" colSpan={3}>{t.total}</td>
+                    <td className="l">{t.total}</td>
+                    <td className="hide-m" />
+                    <td className="hide-m" />
                     <td className="n">{fmt(sum("buy"))}</td>
                     <td className="n">{fmt(sum("repair"))}</td>
                     <td className="n">−{fmt(sum("salvage"))}</td>
@@ -137,6 +140,7 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
           <div className="tw" style={{ border: 0 }}>
             <DagChart N={N} C={C} optEdges={optEdges} optNodes={optNodes} />
           </div>
+          <p className="sub">{t.netHint}</p>
         </div>
       )}
 
@@ -147,7 +151,7 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
             <h2>{t.segTitle}</h2>
             <p className="sub">c(i, j) = P<sub>i+1</sub> + R<sub>j−i</sub> − V<sub>j−i</sub>. {t.segSub}</p>
             <div className="tw">
-              <table>
+              <table className="sticky1">
                 <thead>
                   <tr>
                     <th className="n">i \ j</th>
@@ -175,7 +179,7 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
             <h2>{t.bellTitle}</h2>
             <p className="sub">f(N) = 0, &nbsp; f(i) = min<sub>j&gt;i</sub> [ c(i, j) + f(j) ], i = N−1, …, 0. {t.bellSub}</p>
             <div className="tw">
-              <table>
+              <table className="sticky1">
                 <thead>
                   <tr><th className="n">i</th><th className="n">f(i)</th><th className="n">{t.thBest}</th><th className="l">{t.thCalc}</th></tr>
                 </thead>
@@ -209,25 +213,25 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
           <p className="sub">{t.cmpSub}</p>
           <IntervalChart items={intervals} min={min} />
           <div className="tw">
-            <table>
+            <table className="cards">
               <thead>
                 <tr><th className="l">{t.thStrategy}</th><th className="l">{t.thPath}</th><th className="n">{t.thTotal}</th><th className="n">{t.thDiff}</th></tr>
               </thead>
               <tbody>
                 <tr className="best">
-                  <td className="l"><span className="tag opt">{t.optimalDP}</span></td>
-                  <td className="l num">{pathStr(best)}</td>
-                  <td className="n">{fmt(min)}</td>
-                  <td className="n">0</td>
+                  <td className="l head"><span className="tag opt">{t.optimalDP}</span></td>
+                  <td className="l num" data-label={t.thPath}>{pathStr(best)}</td>
+                  <td className="n" data-label={t.thTotal}>{fmt(min)}</td>
+                  <td className="n" data-label={t.thDiff}>0</td>
                 </tr>
                 {intervals.map((o) => {
                   const d = o.cost - min;
                   return (
                     <tr key={o.T}>
-                      <td className="l">{o.T === N ? t.noReplace : t.everyT(o.T)}</td>
-                      <td className="l num">{pathStr(o.path)}</td>
-                      <td className="n">{fmt(o.cost)}</td>
-                      <td className="n">{d < 1e-9 ? <span className="tag good">0</span> : `+${fmt(d)}`}</td>
+                      <td className="l head">{o.T === N ? t.noReplace : t.everyT(o.T)}</td>
+                      <td className="l num" data-label={t.thPath}>{pathStr(o.path)}</td>
+                      <td className="n" data-label={t.thTotal}>{fmt(o.cost)}</td>
+                      <td className="n" data-label={t.thDiff}>{d < 1e-9 ? <span className="tag good">0</span> : `+${fmt(d)}`}</td>
                     </tr>
                   );
                 })}

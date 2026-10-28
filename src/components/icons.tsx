@@ -58,7 +58,15 @@ export const IconAuto = (p: P) => (
   </Svg>
 );
 
-export const IconArrow = ({ dir = "right", ...p }: P & { dir?: "left" | "right" }) => (
+export const IconSliders = (p: P) => (
+  <Svg {...p}>
+    <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+    <circle cx="16" cy="7" r="2" />
+    <circle cx="10" cy="17" r="2" />
+  </Svg>
+);
+
+export const IconArrow =({ dir = "right", ...p }: P & { dir?: "left" | "right" }) => (
   <Svg {...p}>
     <path d={dir === "right" ? "M5 12h14M13 6l6 6-6 6" : "M19 12H5M11 6l-6 6 6 6"} />
   </Svg>

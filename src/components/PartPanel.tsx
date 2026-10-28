@@ -184,8 +184,23 @@ export default function PartPanel({ parts, sel, error, onSelect, onChange, onAdd
         </div>
       </div>
 
+      {/* Telefonda jadval ichidagi izohlar yashiriladi (ustun tor) — belgilar ma'nosi shu ro'yxatda */}
+      <dl className="sym-legend">
+        <div><dt>P<sub>i</sub></dt><dd>{t.hP}</dd></div>
+        <div><dt>V<sub>k</sub></dt><dd>{t.hV}</dd></div>
+        {part.mode === "direct" ? (
+          <div><dt>R<sub>k</sub></dt><dd>{t.hR}</dd></div>
+        ) : (
+          <>
+            <div><dt>r<sub>m</sub></dt><dd>{t.hr}</dd></div>
+            <div><dt>P<sub>f</sub>(m)</dt><dd>{t.hpf}</dd></div>
+            <div><dt>R<sub>k</sub></dt><dd>{t.hRcalc}</dd></div>
+          </>
+        )}
+      </dl>
+
       <div className="tw">
-        <table className="inp">
+        <table className="inp sticky1">
           <thead>
             <tr>
               <th className="l rowh">{t.indicator}</th>

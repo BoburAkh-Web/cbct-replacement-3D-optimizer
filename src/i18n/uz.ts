@@ -1,4 +1,4 @@
-import { fmt, type Currency } from "../lib/format";
+import { fmt, nb, type Currency } from "../lib/format";
 import type { Part } from "../lib/parts";
 
 /** O'zbekcha matnlar — asosiy lug'at. Rus tili (ru.tsx) aynan shu kalitlarga ega bo'lishi shart. */
@@ -6,7 +6,7 @@ export const uz = {
   lang: "uz" as "uz" | "ru",
   docTitle: "CBCT xarajat optimizatori",
   units: { k: "ming", m: "mln", b: "mlrd" },
-  money: (x: number, cur: Currency) => (cur === "$" ? `$${fmt(x)}` : `${fmt(x)} soʻm`),
+  money: (x: number, cur: Currency) => nb(cur === "$" ? `$${fmt(x)}` : `${fmt(x)} soʻm`),
   curSom: "soʻm",
   curUsd: "$ dollar",
   /** Namunaviy qism nomi tarjima qilinadi, foydalanuvchi bergan nom o'zgarmaydi */
@@ -21,6 +21,9 @@ export const uz = {
   secPart: "Qism boʻyicha hisob",
   secDevice: "Apparat boʻyicha xulosa",
   secModel: "Matematik model",
+  secPartShort: "Hisob",
+  secDeviceShort: "Xulosa",
+  secModelShort: "Model",
   pgInput: "Maʼlumotlar",
   pgResult: "Natija",
   pgNet: "Atsiklik toʻr",
@@ -40,6 +43,12 @@ export const uz = {
   themeAuto: "Tizim mavzusi",
   themeLight: "Yorugʻ mavzu",
   themeDark: "Qorongʻi mavzu",
+  themeAutoShort: "Tizim",
+  themeLightShort: "Yorugʻ",
+  themeDarkShort: "Qorongʻi",
+  themeLabel: "Mavzu",
+  settings: "Sozlamalar",
+  done: "Tayyor",
   themeTitle: (cur: string, next: string) => `${cur} · bosing: ${next.toLowerCase()}`,
   themeAria: (cur: string) => `Mavzu: ${cur}`,
   picker: "Qism",
@@ -141,7 +150,7 @@ export const uz = {
   thDiff: "Optimaldan farq",
   optimalDP: "Optimal (dinamik dasturlash)",
   noReplace: "Almashtirmaslik",
-  everyT: (T: number) => `Har ${T} yilda almashtirish`,
+  everyT: (T: number): string => (T === 1 ? "Har yili almashtirish" : `Har ${T} yilda almashtirish`),
 
   // Apparat xulosasi
   kCount: "Qismlar soni",
@@ -175,6 +184,6 @@ export const uz = {
   aIntervalChart: "Almashtirish oraligʻi boʻyicha xarajat",
   optLabel: "optimal",
   aNet: "Atsiklik toʻr",
-  netHint: "Yoyning ustiga kursor olib borilsa c(i, j) koʻrinadi; ajratilgan yoylar — optimal yoʻl.",
+  netHint: "Ajratilgan yoylar — optimal yoʻl. Har bir yoyning c(i, j) qiymati «Bellman hisobi» sahifasidagi jadvalda.",
   aShare: "Qismlar ulushi",
 };

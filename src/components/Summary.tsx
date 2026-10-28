@@ -79,7 +79,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
               <button className="btn" onClick={copySummary}>{t.copyExcel}</button>
             </div>
             <div className="tw">
-              <table>
+              <table className="cards">
                 <thead>
                   <tr>
                     <th className="n">№</th><th className="l">{t.thPart}</th><th className="n">{t.thPeriod}</th><th className="l">{t.thOptPath}</th>
@@ -89,23 +89,23 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
                 <tbody>
                   {rows.map(({ p, idx, c }) => (
                     <tr key={p.id}>
-                      <td className="n">{idx + 1}</td>
-                      <td className="l">
+                      <td className="n idx">{idx + 1}</td>
+                      <td className="l head">
                         <a href="#" className="link" onClick={(e) => { e.preventDefault(); onOpen(idx); }}>{t.partName(p)}</a>
                       </td>
                       {c.error !== null ? (
                         <>
-                          <td className="n">{p.N}</td>
+                          <td className="n" data-label={t.thPeriod}>{p.N}</td>
                           <td className="l dim" colSpan={5}>{t.incomplete}</td>
                         </>
                       ) : (
                         <>
-                          <td className="n">{c.result.N}</td>
-                          <td className="l num">{c.result.paths.map(pathStr).join(" | ")}</td>
-                          <td className="l">{repStr(c.result)}</td>
-                          <td className="n"><b>{fmt(c.result.min)}</b></td>
-                          <td className="n">{fmt(c.result.noReplace)}</td>
-                          <td className="n">{fmt(c.result.noReplace - c.result.min)}</td>
+                          <td className="n" data-label={t.thPeriod}>{c.result.N}</td>
+                          <td className="l num" data-label={t.thOptPath}>{c.result.paths.map(pathStr).join(" | ")}</td>
+                          <td className="l" data-label={t.thReplYears}>{repStr(c.result)}</td>
+                          <td className="n" data-label={t.kMin}><b>{fmt(c.result.min)}</b></td>
+                          <td className="n" data-label={t.noReplace}>{fmt(c.result.noReplace)}</td>
+                          <td className="n" data-label={t.kSaving}>{fmt(c.result.noReplace - c.result.min)}</td>
                         </>
                       )}
                     </tr>
@@ -113,8 +113,10 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td /><td className="l" colSpan={4}>{t.total}</td>
-                    <td className="n">{fmt(total)}</td><td className="n">{fmt(totalNone)}</td><td className="n">{fmt(totalNone - total)}</td>
+                    <td /><td className="l head" colSpan={4}>{t.total}</td>
+                    <td className="n" data-label={t.kMin}>{fmt(total)}</td>
+                    <td className="n" data-label={t.noReplace}>{fmt(totalNone)}</td>
+                    <td className="n" data-label={t.kSaving}>{fmt(totalNone - total)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -131,7 +133,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
           </div>
           <p className="sub">{t.matrixSub}</p>
           <div className="tw">
-            <table>
+            <table className="sticky1">
               <thead>
                 <tr>
                   <th className="l">{t.thPart}</th>
@@ -142,7 +144,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
               <tbody>
                 {ok.map(({ p, res }) => (
                   <tr key={p.id}>
-                    <td className="l">{t.partName(p)}</td>
+                    <td className="l" title={t.partName(p)}><span className="clip">{t.partName(p)}</span></td>
                     {yearCols.map((y) => {
                       const r = res.years[y - 1];
                       if (!r) return <td key={y} className="n dim">—</td>;

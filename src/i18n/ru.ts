@@ -1,4 +1,4 @@
-import { fmt } from "../lib/format";
+import { fmt, nb } from "../lib/format";
 import type { Dict } from "./index";
 
 /** 1 год, 2 года, 5 лет, 11 лет, 21 год */
@@ -14,7 +14,7 @@ export const ru: Dict = {
   lang: "ru",
   docTitle: "CBCT — оптимизатор затрат",
   units: { k: "тыс.", m: "млн", b: "млрд" },
-  money: (x, cur) => (cur === "$" ? `$${fmt(x)}` : `${fmt(x)} сум`),
+  money: (x, cur) => nb(cur === "$" ? `$${fmt(x)}` : `${fmt(x)} сум`),
   curSom: "сум",
   curUsd: "$ доллар",
   partName: (p) => (p.sample && p.name === p.sample.name && p.sample.nameRu ? p.sample.nameRu : p.name),
@@ -27,6 +27,9 @@ export const ru: Dict = {
   secPart: "Расчёт по узлу",
   secDevice: "Итоги по аппарату",
   secModel: "Математическая модель",
+  secPartShort: "Расчёт",
+  secDeviceShort: "Итоги",
+  secModelShort: "Модель",
   pgInput: "Данные",
   pgResult: "Результат",
   pgNet: "Ациклическая сеть",
@@ -46,6 +49,12 @@ export const ru: Dict = {
   themeAuto: "Системная тема",
   themeLight: "Светлая тема",
   themeDark: "Тёмная тема",
+  themeAutoShort: "Система",
+  themeLightShort: "Светлая",
+  themeDarkShort: "Тёмная",
+  themeLabel: "Тема",
+  settings: "Настройки",
+  done: "Готово",
   themeTitle: (cur, next) => `${cur} · нажмите: ${next.toLowerCase()}`,
   themeAria: (cur) => `Тема: ${cur}`,
   picker: "Узел",
@@ -144,7 +153,7 @@ export const ru: Dict = {
   thDiff: "Отклонение от оптимума",
   optimalDP: "Оптимальная (динамическое программирование)",
   noReplace: "Без замены",
-  everyT: (T) => `Замена каждые ${T === 1 ? "год" : yrs(T)}`,
+  everyT: (T) => (T === 1 ? "Замена каждый год" : `Замена каждые ${yrs(T)}`),
 
   kCount: "Число узлов",
   dIncomplete: (n) => `неполные данные: ${n}`,
@@ -176,6 +185,6 @@ export const ru: Dict = {
   aIntervalChart: "Затраты в зависимости от интервала замены",
   optLabel: "оптимум",
   aNet: "Ациклическая сеть",
-  netHint: "Наведите курсор на дугу, чтобы увидеть c(i, j); выделенные дуги — оптимальный путь.",
+  netHint: "Выделенные дуги — оптимальный путь. Значение c(i, j) каждой дуги — в таблице на странице «Расчёт Беллмана».",
   aShare: "Доли узлов",
 };

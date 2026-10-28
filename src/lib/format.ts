@@ -16,6 +16,9 @@ export function fmtShort(x: number, u: { k: string; m: string; b: string }): str
   return fmt(x);
 }
 
+/** Raqam guruhlari orasida qatorni bo'lmaydigan bo'shliq: "302 720 000 so'm" faqat birlik oldidan ko'chadi */
+export const nb = (s: string) => s.replace(/(\d) (?=\d)/g, "$1\u00a0");
+
 export const pathStr = (p: number[]) => p.join(" → ");
 
 export function niceMax(v: number): number {

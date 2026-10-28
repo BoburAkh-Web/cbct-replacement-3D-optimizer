@@ -11,7 +11,7 @@ import PartPanel from "./components/PartPanel";
 import PartResults, { type PartView } from "./components/PartResults";
 import Summary, { type SummaryView } from "./components/Summary";
 import ModelInfo from "./components/ModelInfo";
-import { IconArrow, IconAuto, IconBook, IconCalc, IconChart, IconMoon, IconSun, Logo } from "./components/icons";
+import { IconArrow, IconAuto, IconBook, IconCalc, IconChart, IconMoon, IconSliders, IconSun, Logo } from "./components/icons";
 
 type Theme = "auto" | "light" | "dark";
 interface Settings {
@@ -30,21 +30,26 @@ interface Page {
 }
 interface Section {
   label: TextKey;
+  /** Telefondagi pastki navigatsiya uchun qisqa nom */
+  short: TextKey;
   base: string;
   icon: React.ReactNode;
   pages: Page[];
 }
 
-const THEMES: { id: Theme; label: TextKey; icon: React.ReactNode }[] = [
-  { id: "auto", label: "themeAuto", icon: <IconAuto /> },
-  { id: "light", label: "themeLight", icon: <IconSun /> },
-  { id: "dark", label: "themeDark", icon: <IconMoon /> },
+const THEMES: { id: Theme; label: TextKey; short: TextKey; icon: React.ReactNode }[] = [
+  { id: "auto", label: "themeAuto", short: "themeAutoShort", icon: <IconAuto /> },
+  { id: "light", label: "themeLight", short: "themeLightShort", icon: <IconSun /> },
+  { id: "dark", label: "themeDark", short: "themeDarkShort", icon: <IconMoon /> },
 ];
+// Brauzer paneli (telefonda manzil satri) rangi — styles.css dagi --bg bilan bir xil
+const THEME_BG = { light: "#f2f5f7", dark: "#0b1218" };
 
 // Navbar: bo'limlar (yuqori qator) va har bo'lim ichidagi sahifalar (pastki qator)
 const SECTIONS: Section[] = [
   {
     label: "secPart",
+    short: "secPartShort",
     base: "/qism",
     icon: <IconCalc />,
     pages: [
@@ -57,6 +62,7 @@ const SECTIONS: Section[] = [
   },
   {
     label: "secDevice",
+    short: "secDeviceShort",
     base: "/apparat",
     icon: <IconChart />,
     pages: [
@@ -65,7 +71,7 @@ const SECTIONS: Section[] = [
       { path: "/apparat/ulush", label: "pgShare" },
     ],
   },
-  { label: "secModel", base: "/model", icon: <IconBook />, pages: [{ path: "/model", label: "pgModel" }] },
+  { label: "secModel", short: "secModelShort", base: "/model", icon: <IconBook />, pages: [{ path: "/model", label: "pgModel" }] },
 ];
 const PATHS = SECTIONS.flatMap((s) => s.pages.map((p) => p.path));
 const HOME = PATHS[0];
@@ -89,6 +95,7 @@ export default function App() {
   const [settings, setSettings] = usePersistentState<Settings>("cbct-opt:settings:v2", defaultSettings, isSettings);
   const [toast, setToast] = useState<string | null>(null);
   const [confirmAll, setConfirmAll] = useState(false);
+  const [sheet, setSheet] = useState(false);
   const toastTimer = useRef<number>();
   const t = DICTS[settings.lang];
 
@@ -109,7 +116,19 @@ export default function App() {
     const root = document.documentElement;
     if (settings.theme === "auto") delete root.dataset.theme;
     else root.dataset.theme = settings.theme;
+    document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((m) => {
+      const own = m.media.includes("dark") ? THEME_BG.dark : THEME_BG.light;
+      m.content = settings.theme === "auto" ? own : THEME_BG[settings.theme];
+    });
   }, [settings.theme]);
+
+  // Sozlamalar oynasi (telefon): Escape bilan yopiladi
+  useEffect(() => {
+    if (!sheet) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setSheet(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sheet]);
   useLayoutEffect(() => {
     document.documentElement.lang = t.lang;
     document.title = t.docTitle;
@@ -121,6 +140,25 @@ export default function App() {
 
   const [tabsRef, tabsPill] = useSlidingPill<HTMLElement>([path, settings.lang]);
   const [subRef, subPill] = useSlidingPill<HTMLElement>([path, settings.lang]);
+  const [bottomRef, bottomPill] = useSlidingPill<HTMLElement>([path, settings.lang]);
+
+  const setLang = (lang: Lang) => settings.lang !== lang && withTransition(() => setSettings((s) => ({ ...s, lang })), "lang");
+  const setTheme = (theme: Theme) => withTransition(() => setSettings((s) => ({ ...s, theme })), "theme");
+  const langSeg = (
+    <div className="seg lang" role="group" aria-label={t.langAria}>
+      {LANGS.map((l) => (
+        <button key={l.id} aria-pressed={settings.lang === l.id} onClick={() => setLang(l.id)}>
+          {l.label}
+        </button>
+      ))}
+    </div>
+  );
+  const curSelect = (id: string) => (
+    <select id={id} aria-label={t.curAria} value={settings.cur} onChange={(e) => setSettings((s) => ({ ...s, cur: e.target.value as Currency }))}>
+      <option value="soʻm">{t.curSom}</option>
+      <option value="$">{t.curUsd}</option>
+    </select>
+  );
 
   const sel = Math.min(settings.sel, parts.length - 1);
   const part = parts[sel];
@@ -263,33 +301,67 @@ export default function App() {
               </a>
             ))}
           </nav>
+          {/* Kompyuter: sozlamalar appbar ichida */}
           <div className="tools">
-            <div className="seg lang" role="group" aria-label={t.langAria}>
-              {LANGS.map((l) => (
-                <button
-                  key={l.id}
-                  aria-pressed={settings.lang === l.id}
-                  onClick={() => settings.lang !== l.id && withTransition(() => setSettings((s) => ({ ...s, lang: l.id })), "lang")}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
-            <select aria-label={t.curAria} value={settings.cur} onChange={(e) => setSettings((s) => ({ ...s, cur: e.target.value as Currency }))}>
-              <option value="soʻm">{t.curSom}</option>
-              <option value="$">{t.curUsd}</option>
-            </select>
+            {langSeg}
+            {curSelect("curSel")}
             <button
               className="iconbtn"
               title={t.themeTitle(t[curTheme.label], t[nextTheme.label])}
               aria-label={t.themeAria(t[curTheme.label])}
-              onClick={() => withTransition(() => setSettings((s) => ({ ...s, theme: nextTheme.id })), "theme")}
+              onClick={() => setTheme(nextTheme.id)}
             >
               {curTheme.icon}
             </button>
           </div>
+          {/* Telefon: sozlamalar pastdan chiqadigan oynada */}
+          <button className="iconbtn settings-btn" aria-label={t.settings} aria-expanded={sheet} onClick={() => setSheet(true)}>
+            <IconSliders size={20} />
+          </button>
         </div>
       </header>
+
+      {/* Telefon: bo'limlar ekran pastida, bosh barmoq yetadigan joyda */}
+      <nav className="bottomnav" aria-label={t.navSections} ref={bottomRef}>
+        <span className="pill" style={bottomPill} aria-hidden="true" />
+        {SECTIONS.map((s) => (
+          <a key={s.base} href={`#${s.pages[0].path}`} aria-current={s === section ? "page" : undefined}>
+            {s.icon}
+            <span>{t[s.short]}</span>
+          </a>
+        ))}
+      </nav>
+
+      {sheet && (
+        <>
+          <div className="backdrop" onClick={() => setSheet(false)} />
+          <div className="sheet" role="dialog" aria-modal="true" aria-label={t.settings}>
+            <div className="sheet-head">
+              <h2>{t.settings}</h2>
+              <button className="btn primary" onClick={() => setSheet(false)}>{t.done}</button>
+            </div>
+            <div className="sheet-row">
+              <span>{t.langAria}</span>
+              {langSeg}
+            </div>
+            <div className="sheet-row">
+              <label htmlFor="curSheet">{t.curAria}</label>
+              {curSelect("curSheet")}
+            </div>
+            <div className="sheet-row">
+              <span>{t.themeLabel}</span>
+              <div className="seg" role="group" aria-label={t.themeLabel}>
+                {THEMES.map((th) => (
+                  <button key={th.id} aria-pressed={settings.theme === th.id} onClick={() => setTheme(th.id)}>
+                    {th.icon}
+                    {t[th.short]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="wrap">
         {(section.pages.length > 1 || isResultPage) && (

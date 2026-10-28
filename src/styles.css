@@ -41,6 +41,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
+a,button,select,input{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 body{margin:0;min-height:100vh;color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.5;
   background:radial-gradient(1100px 420px at 50% -120px, var(--glow), transparent 70%) no-repeat, var(--bg);
   -webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss03"}
@@ -76,12 +77,13 @@ nav.tabs a[aria-current="page"] svg{opacity:1;color:var(--accent)}
 .seg.lang button{min-height:28px;padding:4px 9px;font-size:12px;font-weight:600;letter-spacing:.04em}
 .iconbtn{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);cursor:pointer;color:var(--fg-2)}
 .iconbtn:hover{color:var(--fg);background:var(--surface-2)}
+.settings-btn,.bottomnav,.sheet,.backdrop,.sym-legend{display:none}
+/* Planshet: bo'limlar appbar ning ikkinchi qatorida */
 @media (max-width:900px){
   .appbar-in{grid-template-columns:1fr auto;padding-block:8px}
   nav.tabs{grid-column:1 / -1;grid-row:2;justify-self:stretch;justify-content:flex-start}
   nav.tabs a{flex:1 0 auto;justify-content:center}
 }
-@media (max-width:520px){.brand small{display:none} nav.tabs a svg{display:none}}
 
 /* ---------- Sahifa ---------- */
 .wrap{max-width:1280px;margin:0 auto;padding:22px var(--gutter) 48px;display:flex;flex-direction:column;gap:20px}
@@ -173,6 +175,11 @@ tr.best td{background:var(--opt-soft)}
 .inp input:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)}
 .inp input.err{border-color:var(--bad);background:var(--bad-soft)}
 .inp td.ro{font-family:var(--f-mono);color:var(--fg-2);padding-right:10px}
+/* Keng jadvallar: gorizontal surilganda birinchi ustun joyida qoladi (colspan li "Jami" katagi bundan mustasno) */
+table.sticky1 tr > :first-child:not([colspan]){position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:inset -1px 0 0 var(--line-2)}
+table.sticky1 thead tr > :first-child,table.sticky1 tfoot tr > :first-child:not([colspan]),table.sticky1 tbody th:first-child{background:var(--surface-2)}
+table.sticky1 tr.best > :first-child{background:var(--opt-soft)}
+.clip{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis}
 .tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.01em}
 .tag.buy{background:var(--accent-soft);color:var(--accent)}
 .tag.rep{background:var(--surface-2);color:var(--fg-2)}
@@ -182,7 +189,6 @@ tr.best td{background:var(--opt-soft)}
 /* ---------- Ko'rsatkichlar ---------- */
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 @media (max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:420px){.kpis{grid-template-columns:1fr}}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .kpi .k{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-3);font-weight:600}
 .kpi .v{font-family:var(--f-mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;letter-spacing:-.02em}
@@ -215,6 +221,114 @@ a.link{color:var(--accent);text-underline-offset:2px}
   padding:9px 16px;border-radius:999px;font-size:13px;font-weight:500;z-index:40;box-shadow:0 8px 24px -8px rgba(0,0,0,.4)}
 .foot{color:var(--fg-3);font-size:12px;display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:14px}
 
+/* ---------- Telefon (≤760px) ----------
+   Bo'limlar pastki navigatsiyada, sozlamalar pastdan chiqadigan oynada, jadvallar kartalarga aylanadi. */
+@media (max-width:760px){
+  .appbar-in{grid-template-columns:minmax(0,1fr) auto;padding-block:8px;gap:12px}
+  .appbar nav.tabs,.appbar .tools{display:none}
+  .settings-btn{display:inline-grid}
+  .brand h1{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand small{font-size:11px}
+
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;isolation:isolate;
+    padding:6px max(10px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
+    background:color-mix(in srgb, var(--surface) 88%, transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);
+    border-top:1px solid var(--line)}
+  .bottomnav .pill{background:var(--accent-soft);border-radius:14px}
+  .bottomnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:54px;border-radius:14px;
+    color:var(--fg-3);text-decoration:none;font-size:11.5px;font-weight:600;transition:color .2s}
+  .bottomnav a svg{width:22px;height:22px}
+  .bottomnav a[aria-current="page"]{color:var(--accent)}
+
+  .backdrop{display:block;position:fixed;inset:0;z-index:40;background:rgba(5,12,16,.45)}
+  .sheet{display:flex;flex-direction:column;gap:16px;position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--surface);
+    border-radius:20px 20px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom, 0px));box-shadow:0 -12px 40px -12px rgba(0,0,0,.35);overscroll-behavior:contain}
+  .sheet::before{content:"";align-self:center;width:40px;height:4px;border-radius:2px;background:var(--line)}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .sheet-head h2{font-family:var(--f-display);font-size:20px}
+  .sheet-row{display:flex;flex-direction:column;gap:8px}
+  .sheet-row > span,.sheet-row > label{font-size:11.5px;font-weight:600;color:var(--fg-3);text-transform:uppercase;letter-spacing:.05em}
+  .sheet .seg button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px}
+  .sheet .seg.lang button{font-size:14px}
+
+  .wrap{padding:14px var(--gutter) calc(96px + env(safe-area-inset-bottom, 0px));gap:14px}
+  .stack{gap:14px}
+  .subbar{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px}
+  nav.subnav{box-shadow:none}
+  nav.subnav a{min-height:40px}
+  .picker select{flex:1;min-width:0;width:100%;max-width:none}
+
+  .card{padding:16px 14px;gap:12px;border-radius:14px}
+  .card h2{font-size:18px}
+  .head{align-items:center}
+  .head .btn{min-height:40px;padding:6px 12px;font-size:13px}
+
+  /* KPI: asosiy ko'rsatkich to'liq kenglikda, qolganlari 2 ustunda (toq qolgani ham to'liq) */
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kpi{padding:13px 14px;gap:4px;border-radius:14px}
+  .kpi.main{grid-column:1 / -1;order:-1}
+  .kpis > .kpi:not(.main):last-child{grid-column:1 / -1}
+  .kpi .k{font-size:10.5px}
+  .kpi .v{font-size:18px}
+  .kpi.main .v{font-size:26px}
+  .kpi .d{font-size:12px}
+
+  .controls{gap:10px}
+  .controls .field{flex:1 1 100%}
+  .controls .btnrow{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .controls .btn{width:100%;white-space:normal}
+  .controls .btn.ghost{border-color:var(--line)}
+  .head .fieldrow{flex-direction:column;align-items:stretch;width:100%;gap:6px}
+  .seg{display:flex;width:100%}
+  .seg button{flex:1;white-space:normal;line-height:1.25}
+  .ext-input{width:100%}
+  .inp th.rowh{min-width:58px;max-width:58px;padding-inline:8px;font-size:11px;overflow:hidden;text-overflow:ellipsis}
+  .inp th.rowh span{display:none}
+  .inp input{min-width:124px}
+  .sym-legend{display:grid;gap:3px;margin:0;font-size:12.5px;color:var(--fg-2)}
+  .sym-legend div{display:flex;gap:10px}
+  .sym-legend dt{flex:none;min-width:40px;font-family:var(--f-mono);font-weight:600;color:var(--fg)}
+  .sym-legend dd{margin:0}
+  .hide-m{display:none}
+  table.sticky1 td.buy:first-child{box-shadow:inset 3px 0 0 var(--buy), inset -1px 0 0 var(--line-2);font-weight:700;color:var(--accent)}
+  .clip{max-width:130px}
+
+  /* Jadval → kartalar: har qator alohida karta, ustun nomi qiymat yonida */
+  table.cards thead{display:none}
+  table.cards,table.cards tbody,table.cards tfoot,table.cards tr,table.cards td{display:block;width:100%}
+  table.cards tr{padding:12px 14px;border-bottom:1px solid var(--line-2)}
+  table.cards tbody tr:last-child{border-bottom:0}
+  table.cards td{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:3px 0;border:0;white-space:normal;text-align:right;background:transparent}
+  table.cards td[data-label]::before{content:attr(data-label);flex:none;font-family:var(--f-body);font-size:12px;color:var(--fg-3);text-align:left}
+  table.cards td.idx,table.cards td:empty{display:none}
+  table.cards td.head{display:block;text-align:left;font-size:14.5px;font-weight:600;padding-bottom:6px}
+  table.cards tfoot tr{background:var(--surface-2);border-top:1px solid var(--line)}
+  table.cards tfoot td{border:0;background:transparent}
+  table.cards tbody tr:hover td{background:transparent}
+  table.cards tr.best{background:var(--opt-soft)}
+  table.cards tr.best td{background:transparent}
+
+  .pager a{flex:1;min-width:0;padding:12px 14px}
+  .foot{flex-direction:column;align-items:stretch;text-align:center}
+  .foot .btnrow{flex-direction:column}
+  .foot .btn{border-color:var(--line);white-space:normal}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom, 0px));max-width:calc(100vw - 32px);text-align:center}
+  .formula{font-size:12.5px}
+}
+
+/* Sensorli ekran: iOS input fokusida sahifani kattalashtirmasligi uchun 16px, barmoqqa qulay balandlik */
+@media (max-width:760px), (pointer:coarse){
+  select,input[type=text],.inp input,.tools select{font-size:16px}
+  .btn,select,input[type=text],.tools select{min-height:42px}
+  .seg button{min-height:40px}
+  .iconbtn{width:42px;height:42px}
+}
+/* Planshet (sensorli, appbar da bo'limlar ko'rinadi): navigatsiya tugmalari ham barmoqqa qulay */
+@media (max-width:900px), (pointer:coarse){
+  nav.tabs a,nav.subnav a{min-height:40px}
+  .seg.lang button{min-height:36px}
+}
+
 /* ---------- Animatsiyalar ----------
    Faqat transform va opacity (GPU'da, qayta joylashuvsiz). Davomiyliklar qisqa: 150–450ms. */
 .toast{animation:toast-in .22s cubic-bezier(.2,.9,.3,1.2)}
@@ -223,12 +337,19 @@ a.link{color:var(--accent);text-underline-offset:2px}
 
 @media (prefers-reduced-motion: no-preference){
   .btn,.iconbtn,nav.tabs a,.seg button,.pager a,.kpi,select,input{transition:background .15s,color .15s,border-color .15s,box-shadow .2s,transform .2s cubic-bezier(.2,.8,.2,1)}
-  .btn:active,.iconbtn:active,.seg button:active{transform:scale(.96)}
-  .pager a:hover{transform:translateY(-2px)}
-  .pager a:hover svg{transform:translateX(3px)}
-  .pager a:first-child:hover svg{transform:translateX(-3px)}
+  .btn:active,.iconbtn:active,.seg button:active,.pager a:active,.bottomnav a:active{transform:scale(.96)}
   .pager a svg{transition:transform .2s}
-  .kpi:hover{transform:translateY(-2px)}
+  /* Hover faqat sichqonchali qurilmada — telefonda bosilgandan keyin "yopishib" qolmasin */
+  @media (hover:hover){
+    .pager a:hover{transform:translateY(-2px)}
+    .pager a:hover svg{transform:translateX(3px)}
+    .pager a:first-child:hover svg{transform:translateX(-3px)}
+    .kpi:hover{transform:translateY(-2px)}
+  }
+  .bottomnav a{transition:color .2s,transform .2s}
+  .sheet{animation:sheet-in .3s cubic-bezier(.2,.9,.3,1)}
+  .backdrop{animation:fade .2s ease-out}
+  @keyframes sheet-in{from{transform:translateY(100%)}}
 
   /* Sahifa kontenti: bloklar ketma-ket yengil ko'tarilib chiqadi */
   @keyframes rise{from{opacity:0;transform:translateY(8px)}}
@@ -259,8 +380,9 @@ a.link{color:var(--accent);text-underline-offset:2px}
   :root[data-vt="lang"]::view-transition-old(root),:root[data-vt="lang"]::view-transition-new(root){animation-duration:.28s}
   :root[data-vt="page"] .appbar{view-transition-name:appbar}
   :root[data-vt="page"] .subbar{view-transition-name:subbar}
-  ::view-transition-old(appbar),::view-transition-old(subbar){display:none}
-  ::view-transition-new(appbar),::view-transition-new(subbar){animation:none}
-  ::view-transition-group(appbar),::view-transition-group(subbar){animation:none}
+  :root[data-vt="page"] .bottomnav{view-transition-name:bottomnav}
+  ::view-transition-old(appbar),::view-transition-old(subbar),::view-transition-old(bottomnav){display:none}
+  ::view-transition-new(appbar),::view-transition-new(subbar),::view-transition-new(bottomnav){animation:none}
+  ::view-transition-group(appbar),::view-transition-group(subbar),::view-transition-group(bottomnav){animation:none}
 }
 @media (prefers-reduced-motion: reduce){.pill{transition:none}}
