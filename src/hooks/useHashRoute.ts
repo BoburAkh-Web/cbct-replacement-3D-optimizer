@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { withTransition } from "../lib/transition";
 
 const read = () => window.location.hash.replace(/^#/, "") || "/";
 
@@ -7,7 +8,7 @@ export function useHashRoute(): string {
   const [path, setPath] = useState(read);
 
   useEffect(() => {
-    const onChange = () => setPath(read());
+    const onChange = () => withTransition(() => setPath(read()));
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
   }, []);

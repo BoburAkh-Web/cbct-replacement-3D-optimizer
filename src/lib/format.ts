@@ -7,8 +7,13 @@ export function fmt(x: number): string {
   return nf.format(Math.round(x * 100) / 100).replace(/ | /g, " ");
 }
 
-export function money(x: number, cur: Currency): string {
-  return cur === "$" ? `$${fmt(x)}` : `${fmt(x)} soʻm`;
+/** Grafik o'qlari uchun qisqa yozuv: 115 200 000 → "115,2 mln" (birliklar tilga qarab beriladi) */
+export function fmtShort(x: number, u: { k: string; m: string; b: string }): string {
+  const a = Math.abs(x);
+  if (a >= 1e9) return `${fmt(+(x / 1e9).toFixed(2))} ${u.b}`;
+  if (a >= 1e6) return `${fmt(+(x / 1e6).toFixed(1))} ${u.m}`;
+  if (a >= 1e4) return `${fmt(+(x / 1e3).toFixed(0))} ${u.k}`;
+  return fmt(x);
 }
 
 export const pathStr = (p: number[]) => p.join(" → ");

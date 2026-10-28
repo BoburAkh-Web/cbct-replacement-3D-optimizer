@@ -21,11 +21,13 @@ export interface Part {
 }
 
 const roundTo = (x: number, s: number) => Math.round(x / s) * s;
+/** Yaxlitlash qadami qiymat kattaligiga mos: 9 000 → 5, 115 200 000 → 500 000 */
+const stepFor = (x: number) => Math.max(1, 5 * 10 ** (Math.floor(Math.log10(Math.max(x, 1))) - 3));
 
 /** Yillar soni oshirilganda massivni MAX_YEARS gacha mantiqiy davom ettirish */
 function extend(arr: number[], kind: "P" | "V" | "R"): number[] {
   const a = arr.slice();
-  const step = a[0] >= 1000 ? 50 : 5;
+  const step = stepFor(a[0]);
   while (a.length < MAX_YEARS) {
     const L = a[a.length - 1];
     const L2 = a.length > 1 ? a[a.length - 2] : L * 0.9;
@@ -56,8 +58,8 @@ export function makePart(src: SampleSource, keepSample = true): Part {
     ext: {
       r: str(r),
       pf: str(pf),
-      Cf: String(roundTo(src.P[0] * 0.08, src.P[0] >= 1000 ? 50 : 5)),
-      Cd: String(src.test ? 10 : 150),
+      Cf: String(roundTo(src.P[0] * 0.08, stepFor(src.P[0]))),
+      Cd: String(src.Cd),
       td: String(src.td || 2),
     },
     sample: keepSample ? src : null,
@@ -67,15 +69,18 @@ export function makePart(src: SampleSource, keepSample = true): Part {
 
 const isNum = (s: string) => s.trim() !== "" && Number.isFinite(Number(s));
 
-export function validate(p: Part): string | null {
+/** Xato kalitlari — matni i18n lug'atida */
+export type PartError = "errNum" | "errExt" | "errPf";
+
+export function validate(p: Part): PartError | null {
   const N = p.N;
   const arrs = p.mode === "direct" ? [p.P, p.V, p.R] : [p.P, p.V, p.ext.r, p.ext.pf];
-  for (const a of arrs) for (let i = 0; i < N; i++) if (!isNum(a[i] ?? "")) return "Barcha katakchalarga son kiriting (boʻsh yoki notoʻgʻri qiymat bor).";
+  for (const a of arrs) for (let i = 0; i < N; i++) if (!isNum(a[i] ?? "")) return "errNum";
   if (p.mode === "ext") {
-    if (![p.ext.Cf, p.ext.Cd, p.ext.td].every(isNum)) return "Cf, Cd va td maydonlariga son kiriting.";
+    if (![p.ext.Cf, p.ext.Cd, p.ext.td].every(isNum)) return "errExt";
     for (let i = 0; i < N; i++) {
       const v = Number(p.ext.pf[i]);
-      if (v < 0 || v > 1) return "Nosozlik ehtimoli 0 va 1 oraligʻida boʻlishi kerak.";
+      if (v < 0 || v > 1) return "errPf";
     }
   }
   return null;
@@ -97,7 +102,7 @@ export interface PartResult extends Solution {
   intervals: { T: number; cost: number; path: number[] }[];
 }
 
-export type Computed = { error: string } | { error: null; result: PartResult };
+export type Computed = { error: PartError } | { error: null; result: PartResult };
 
 export function computePart(p: Part): Computed {
   const err = validate(p);

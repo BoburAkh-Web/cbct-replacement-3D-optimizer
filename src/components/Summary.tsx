@@ -1,6 +1,7 @@
 import { replacementYears } from "../lib/model";
 import { computePart, type Part, type PartResult } from "../lib/parts";
-import { copyTSV, fmt, money, pathStr, type Currency } from "../lib/format";
+import { copyTSV, fmt, pathStr, type Currency } from "../lib/format";
+import { useT } from "../i18n";
 import { ShareChart } from "./charts";
 
 export type SummaryView = "xulosa" | "yillik" | "ulush";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
+  const t = useT();
   // Tekshiruv (darslik) misoli apparat xulosasiga kirmaydi
   const rows = parts
     .map((p, idx) => ({ p, idx, c: computePart(p) }))
@@ -26,22 +28,22 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
   const nRep = ok.reduce((a, r) => a + replacementYears(r.res.paths[0]).length, 0);
   const yearCols = Array.from({ length: maxN }, (_, i) => i + 1);
   const colSum = yearCols.map((y) => ok.reduce((a, r) => a + (r.res.years[y - 1]?.net ?? 0), 0));
-  const repStr = (res: PartResult) => replacementYears(res.paths[0]).map((y) => `${y}-yil`).join(", ") || "—";
+  const repStr = (res: PartResult) => replacementYears(res.paths[0]).map(t.yearN).join(", ") || "—";
 
-  const copy = async (data: (string | number)[][]) => notify((await copyTSV(data)) ? "Nusxa olindi — Excelga joylashtiring (Ctrl+V)" : "Nusxa olib boʻlmadi");
+  const copy = async (data: (string | number)[][]) => notify((await copyTSV(data)) ? t.toastCopied : t.toastCopyFail);
 
   const copySummary = () =>
     copy([
-      ["№", "Qism", "Reja davri (yil)", "Optimal yoʻl", "Almashtirish yillari", "Minimal xarajat", "Almashtirmaslik", "Tejov"],
-      ...ok.map(({ p, idx, res }) => [idx + 1, p.name, res.N, res.paths.map(pathStr).join(" | "), repStr(res), res.min, res.noReplace, res.noReplace - res.min]),
-      ["", "Jami", "", "", "", total, totalNone, totalNone - total],
+      ["№", t.thPart, t.thPeriodYears, t.thOptPath, t.thReplYears, t.kMin, t.noReplace, t.kSaving],
+      ...ok.map(({ p, idx, res }) => [idx + 1, t.partName(p), res.N, res.paths.map(pathStr).join(" | "), repStr(res), res.min, res.noReplace, res.noReplace - res.min]),
+      ["", t.total, "", "", "", total, totalNone, totalNone - total],
     ]);
 
   const copyMatrix = () =>
     copy([
-      ["Qism", ...yearCols.map((y) => `${y}-yil`), "Jami"],
-      ...ok.map(({ p, res }) => [p.name, ...yearCols.map((y) => res.years[y - 1]?.net ?? ""), res.min]),
-      ["Apparat boʻyicha", ...colSum, total],
+      [t.thPart, ...yearCols.map(t.yearN), t.total],
+      ...ok.map(({ p, res }) => [t.partName(p), ...yearCols.map((y) => res.years[y - 1]?.net ?? ""), res.min]),
+      [t.byDevice, ...colSum, total],
     ]);
 
   return (
@@ -50,38 +52,38 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
         <>
           <div className="kpis">
             <div className="kpi">
-              <span className="k">Qismlar soni</span>
+              <span className="k">{t.kCount}</span>
               <span className="v">{rows.length}</span>
-              <span className="d">{ok.length < rows.length ? `${rows.length - ok.length} tasida maʼlumot toʻliq emas` : "hammasi hisoblandi"}</span>
+              <span className="d">{ok.length < rows.length ? t.dIncomplete(rows.length - ok.length) : t.dAllOk}</span>
             </div>
             <div className="kpi main">
-              <span className="k">Jami minimal xarajat</span>
-              <span className="v">{money(total, cur)}</span>
-              <span className="d">barcha qismlar, oʻz reja davrlari boʻyicha</span>
+              <span className="k">{t.kTotal}</span>
+              <span className="v">{t.money(total, cur)}</span>
+              <span className="d">{t.dTotal}</span>
             </div>
             <div className="kpi">
-              <span className="k">Rejali almashtirishlar</span>
-              <span className="v">{nRep} ta</span>
-              <span className="d">eng uzun reja davri — {maxN} yil</span>
+              <span className="k">{t.kRepls}</span>
+              <span className="v">{t.vCount(nRep)}</span>
+              <span className="d">{t.dMaxN(maxN)}</span>
             </div>
             <div className="kpi">
-              <span className="k">Jami tejov</span>
-              <span className="v">{money(totalNone - total, cur)}</span>
-              <span className="d">almashtirmaslikka nisbatan{totalNone > 0 ? ` · ${fmt(((totalNone - total) / totalNone) * 100)}%` : ""}</span>
+              <span className="k">{t.kTotalSave}</span>
+              <span className="v">{t.money(totalNone - total, cur)}</span>
+              <span className="d">{t.dTotalSave}{totalNone > 0 ? ` · ${fmt(((totalNone - total) / totalNone) * 100)}%` : ""}</span>
             </div>
           </div>
 
           <div className="card">
             <div className="head">
-              <h2>Qismlar boʻyicha optimal strategiya</h2>
-              <button className="btn" onClick={copySummary}>Excel uchun nusxa olish</button>
+              <h2>{t.stratTitle}</h2>
+              <button className="btn" onClick={copySummary}>{t.copyExcel}</button>
             </div>
             <div className="tw">
               <table>
                 <thead>
                   <tr>
-                    <th className="n">№</th><th className="l">Qism</th><th className="n">Reja davri</th><th className="l">Optimal yoʻl</th>
-                    <th className="l">Almashtirish yillari</th><th className="n">Minimal xarajat</th><th className="n">Almashtirmaslik</th><th className="n">Tejov</th>
+                    <th className="n">№</th><th className="l">{t.thPart}</th><th className="n">{t.thPeriod}</th><th className="l">{t.thOptPath}</th>
+                    <th className="l">{t.thReplYears}</th><th className="n">{t.kMin}</th><th className="n">{t.noReplace}</th><th className="n">{t.kSaving}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -89,12 +91,12 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
                     <tr key={p.id}>
                       <td className="n">{idx + 1}</td>
                       <td className="l">
-                        <a href="#" className="link" onClick={(e) => { e.preventDefault(); onOpen(idx); }}>{p.name}</a>
+                        <a href="#" className="link" onClick={(e) => { e.preventDefault(); onOpen(idx); }}>{t.partName(p)}</a>
                       </td>
                       {c.error !== null ? (
                         <>
                           <td className="n">{p.N}</td>
-                          <td className="l dim" colSpan={5}>maʼlumot toʻliq emas</td>
+                          <td className="l dim" colSpan={5}>{t.incomplete}</td>
                         </>
                       ) : (
                         <>
@@ -111,7 +113,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td /><td className="l" colSpan={4}>Jami</td>
+                    <td /><td className="l" colSpan={4}>{t.total}</td>
                     <td className="n">{fmt(total)}</td><td className="n">{fmt(totalNone)}</td><td className="n">{fmt(totalNone - total)}</td>
                   </tr>
                 </tfoot>
@@ -124,28 +126,28 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
       {view === "yillik" && (
         <div className="card">
           <div className="head">
-            <h2>Apparat boʻyicha yillik xarajatlar jadvali</h2>
-            <button className="btn" onClick={copyMatrix}>Excel uchun nusxa olish</button>
+            <h2>{t.matrixTitle}</h2>
+            <button className="btn" onClick={copyMatrix}>{t.copyExcel}</button>
           </div>
-          <p className="sub">Har bir qismning optimal strategiyasi boʻyicha yillik sof xarajati. Chap chiziqli kataklar — shu yil boshida qism yangisiga almashtiriladi.</p>
+          <p className="sub">{t.matrixSub}</p>
           <div className="tw">
             <table>
               <thead>
                 <tr>
-                  <th className="l">Qism</th>
-                  {yearCols.map((y) => <th key={y} className="n">{y}-yil</th>)}
-                  <th className="n">Jami</th>
+                  <th className="l">{t.thPart}</th>
+                  {yearCols.map((y) => <th key={y} className="n">{t.yearN(y)}</th>)}
+                  <th className="n">{t.total}</th>
                 </tr>
               </thead>
               <tbody>
                 {ok.map(({ p, res }) => (
                   <tr key={p.id}>
-                    <td className="l">{p.name}</td>
+                    <td className="l">{t.partName(p)}</td>
                     {yearCols.map((y) => {
                       const r = res.years[y - 1];
                       if (!r) return <td key={y} className="n dim">—</td>;
                       return (
-                        <td key={y} className={`n ${r.isPurchase && y > 1 ? "buy" : ""}`} title={r.isPurchase ? "yangi qism" : "taʼmirlab ishlatish"}>
+                        <td key={y} className={`n ${r.isPurchase && y > 1 ? "buy" : ""}`} title={r.isPurchase ? t.tagNew : t.tagRep}>
                           {fmt(r.net)}
                         </td>
                       );
@@ -156,7 +158,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
               </tbody>
               <tfoot>
                 <tr>
-                  <td className="l">Apparat boʻyicha</td>
+                  <td className="l">{t.byDevice}</td>
                   {colSum.map((v, i) => <td key={i} className="n">{fmt(v)}</td>)}
                   <td className="n">{fmt(total)}</td>
                 </tr>
@@ -168,9 +170,9 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
 
       {view === "ulush" && (
         <div className="card">
-          <h2>Qismlar ulushi</h2>
-          <p className="sub">Reja davridagi minimal xarajat boʻyicha qismlar solishtirmasi.</p>
-          <ShareChart items={ok.map(({ p, res }) => ({ name: p.name, value: res.min }))} total={total} />
+          <h2>{t.shareTitle}</h2>
+          <p className="sub">{t.shareSub}</p>
+          <ShareChart items={ok.map(({ p, res }) => ({ name: t.partName(p), value: res.min }))} total={total} />
         </div>
       )}
     </div>

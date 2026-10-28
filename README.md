@@ -14,7 +14,8 @@ Magistrlik dissertatsiyasi: *“Korxonalarda jihozlarni almashtirish va taʼmirl
 - Muntazam (har T yilda) almashtirish va almashtirmaslik bilan solishtirish
 - Kengaytma: R ni nosozlik ehtimoli va bekor turish yoʻqotishi orqali hisoblash
 - Butun apparat boʻyicha xulosa va yillik xarajatlar matritsasi
-- Jadvallarni Excelga nusxalash, $ / soʻm tanlash
+- Jadvallarni Excelga nusxalash; asosiy pul birligi — soʻm (namunalar 1 $ = 12 800 soʻm kursida), $ ham tanlanadi
+- Interfeys tili: oʻzbekcha va ruscha (appbar dagi UZ / RU)
 - Maʼlumotlar brauzerda (localStorage) saqlanadi
 
 ## Matematik model
