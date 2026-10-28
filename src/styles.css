@@ -1,13 +1,14 @@
 /* Layout: yopishqoq appbar (logo + bo'limlar + sozlamalar), ostida bo'lim sahifalari (raqamlangan qadamlar),
    sahifa kontenti va oldingi/keyingi navigatsiya.
-   Rang g'oyasi: rentgen plyonkasi — sovuq ko'kish neytral, firuza aksent, optimal yo'l uchun kahrabo. */
+   Rang g'oyasi: rentgen plyonkasi — sovuq ko'kish neytral, firuza aksent, optimal yo'l uchun kahrabo.
+   Asosiy mavzu — qorong'i (index.html). Kontrast WCAG bo'yicha: matn ≥ 4.5:1, izohlar ≥ 3.5:1, grafik ustunlari ≥ 3:1. */
 :root{
   --bg:#f2f5f7; --surface:#ffffff; --surface-2:#eef3f5; --line:#d6e0e5; --line-2:#e5ecef;
-  --fg:#13202a; --fg-2:#475866; --fg-3:#7a8a96;
-  --accent:#0b6e79; --accent-2:#0e8794; --accent-soft:#dbeef0; --accent-fg:#ffffff;
-  --opt:#c46a0a; --opt-soft:#fbead6;
-  --good:#1f7a4a; --good-soft:#dcefe3; --bad:#b4372f; --bad-soft:#f8e1de;
-  --buy:#0b6e79; --rep:#8aa1af; --sell:#d9822b;
+  --fg:#13202a; --fg-2:#475866; --fg-3:#6b7c88;
+  --accent:#0b6e79; --accent-2:#0c7d89; --accent-soft:#dff1f3; --accent-fg:#ffffff;
+  --opt:#a35406; --opt-soft:#fdf1e3;
+  --good:#1f7a4a; --good-soft:#dcefe3; --bad:#b4372f; --bad-soft:#fbe6e3;
+  --buy:#0b6e79; --rep:#7790a0; --sell:#c46f1c;
   --glow:rgba(11,110,121,.10);
   --shadow:0 1px 2px rgba(16,32,42,.05), 0 6px 20px -10px rgba(16,32,42,.14);
   --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
@@ -18,7 +19,7 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0b1218; --surface:#121c24; --surface-2:#18252f; --line:#24343f; --line-2:#1d2b35;
-  --fg:#e4ecf1; --fg-2:#a3b3bf; --fg-3:#6f818c;
+  --fg:#e4ecf1; --fg-2:#a3b3bf; --fg-3:#73858f;
   --accent:#4fb8c3; --accent-2:#6fcbd4; --accent-soft:#143840; --accent-fg:#05161a;
   --opt:#f0a24a; --opt-soft:#3a2a15;
   --good:#5cc08a; --good-soft:#15301f; --bad:#e8776e; --bad-soft:#3a1c19;
@@ -28,7 +29,7 @@
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0b1218; --surface:#121c24; --surface-2:#18252f; --line:#24343f; --line-2:#1d2b35;
-  --fg:#e4ecf1; --fg-2:#a3b3bf; --fg-3:#6f818c;
+  --fg:#e4ecf1; --fg-2:#a3b3bf; --fg-3:#73858f;
   --accent:#4fb8c3; --accent-2:#6fcbd4; --accent-soft:#143840; --accent-fg:#05161a;
   --opt:#f0a24a; --opt-soft:#3a2a15;
   --good:#5cc08a; --good-soft:#15301f; --bad:#e8776e; --bad-soft:#3a1c19;
@@ -195,7 +196,7 @@ table.sticky1 tr.best > :first-child{background:var(--opt-soft)}
 .kpi .v.path{color:var(--opt)}
 .kpi .d{font-size:12.5px;color:var(--fg-2)}
 .kpi.main{background:linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);border-color:transparent;color:var(--accent-fg)}
-.kpi.main .k,.kpi.main .d{color:color-mix(in srgb, var(--accent-fg) 78%, transparent)}
+.kpi.main .k,.kpi.main .d{color:var(--accent-fg)}
 
 /* ---------- Grafiklar ---------- */
 .chart{width:100%;height:auto;display:block}
@@ -301,7 +302,7 @@ a.link{color:var(--accent);text-underline-offset:2px}
   table.cards td{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:3px 0;border:0;white-space:normal;text-align:right;background:transparent}
   table.cards td[data-label]::before{content:attr(data-label);flex:none;font-family:var(--f-body);font-size:12px;color:var(--fg-3);text-align:left}
   table.cards td.idx,table.cards td:empty{display:none}
-  table.cards td.head{display:block;text-align:left;font-size:14.5px;font-weight:600;padding-bottom:6px}
+  table.cards td.cardhead{display:block;text-align:left;font-size:14.5px;font-weight:600;padding-bottom:6px}
   table.cards tfoot tr{background:var(--surface-2);border-top:1px solid var(--line)}
   table.cards tfoot td{border:0;background:transparent}
   table.cards tbody tr:hover td{background:transparent}

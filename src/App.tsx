@@ -76,9 +76,10 @@ const SECTIONS: Section[] = [
 const PATHS = SECTIONS.flatMap((s) => s.pages.map((p) => p.path));
 const HOME = PATHS[0];
 
-// v2: asosiy pul birligi so'm, namunalar so'mda (v1 dagi dollar ma'lumotlari brauzerda tegilmay qoladi)
+// parts v3: real narxlarga yaqin namunalar (v2 dagi eski namunalar brauzerda tegilmay qoladi)
+// settings v3: asosiy mavzu qorong'i (kalit index.html dagi mavzu skriptida ham ishlatiladi)
 const defaultParts = () => SAMPLE_PARTS.map((s) => makePart(s));
-const defaultSettings = (): Settings => ({ sel: 0, cur: "soʻm", theme: "auto", lang: "uz" });
+const defaultSettings = (): Settings => ({ sel: 0, cur: "soʻm", theme: "dark", lang: "uz" });
 const isSettings = (x: unknown): x is Settings => {
   const s = x as Settings;
   return (
@@ -91,8 +92,8 @@ const isSettings = (x: unknown): x is Settings => {
 };
 
 export default function App() {
-  const [parts, setParts] = usePersistentState<Part[]>("cbct-opt:parts:v2", defaultParts, isPartArray);
-  const [settings, setSettings] = usePersistentState<Settings>("cbct-opt:settings:v2", defaultSettings, isSettings);
+  const [parts, setParts] = usePersistentState<Part[]>("cbct-opt:parts:v3", defaultParts, isPartArray);
+  const [settings, setSettings] = usePersistentState<Settings>("cbct-opt:settings:v3", defaultSettings, isSettings);
   const [toast, setToast] = useState<string | null>(null);
   const [confirmAll, setConfirmAll] = useState(false);
   const [sheet, setSheet] = useState(false);

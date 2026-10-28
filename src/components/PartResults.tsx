@@ -219,7 +219,7 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
               </thead>
               <tbody>
                 <tr className="best">
-                  <td className="l head"><span className="tag opt">{t.optimalDP}</span></td>
+                  <td className="l cardhead"><span className="tag opt">{t.optimalDP}</span></td>
                   <td className="l num" data-label={t.thPath}>{pathStr(best)}</td>
                   <td className="n" data-label={t.thTotal}>{fmt(min)}</td>
                   <td className="n" data-label={t.thDiff}>0</td>
@@ -228,7 +228,7 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
                   const d = o.cost - min;
                   return (
                     <tr key={o.T}>
-                      <td className="l head">{o.T === N ? t.noReplace : t.everyT(o.T)}</td>
+                      <td className="l cardhead">{o.T === N ? t.noReplace : t.everyT(o.T)}</td>
                       <td className="l num" data-label={t.thPath}>{pathStr(o.path)}</td>
                       <td className="n" data-label={t.thTotal}>{fmt(o.cost)}</td>
                       <td className="n" data-label={t.thDiff}>{d < 1e-9 ? <span className="tag good">0</span> : `+${fmt(d)}`}</td>

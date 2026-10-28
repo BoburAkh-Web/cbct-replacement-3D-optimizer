@@ -19,7 +19,8 @@ export function YearChart({ rows }: { rows: YearRow[] }) {
   const y = (v: number) => T + ((top - v) / span) * (H - T - B);
   const bw = (W - L - Rm) / n;
   const ticks = [0, 1, 2, 3, 4].map((k) => (top * k) / 4);
-  if (bot) ticks.push(-bot);
+  // Qoldiq qiymat kichik bo'lsa pastki belgi "0" ga yopishib qoladi — u holda chiqarilmaydi
+  if (bot && y(-bot) - y(0) >= 14) ticks.push(-bot);
 
   return (
     <div ref={ref}>

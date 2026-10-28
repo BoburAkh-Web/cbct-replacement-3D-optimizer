@@ -90,7 +90,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
                   {rows.map(({ p, idx, c }) => (
                     <tr key={p.id}>
                       <td className="n idx">{idx + 1}</td>
-                      <td className="l head">
+                      <td className="l cardhead">
                         <a href="#" className="link" onClick={(e) => { e.preventDefault(); onOpen(idx); }}>{t.partName(p)}</a>
                       </td>
                       {c.error !== null ? (
@@ -113,7 +113,7 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td /><td className="l head" colSpan={4}>{t.total}</td>
+                    <td /><td className="l cardhead" colSpan={4}>{t.total}</td>
                     <td className="n" data-label={t.kMin}>{fmt(total)}</td>
                     <td className="n" data-label={t.noReplace}>{fmt(totalNone)}</td>
                     <td className="n" data-label={t.kSaving}>{fmt(totalNone - total)}</td>

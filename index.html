@@ -2,6 +2,16 @@
 <html lang="uz">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Mavzu sahifa chizilishidan oldin qo'yiladi, aks holda React yuklanguncha yorug' mavzu "miltillab" ketadi.
+      // Asosiy mavzu — qorong'i; kalit App.tsx dagi sozlamalar kaliti bilan bir xil.
+      try {
+        var theme = JSON.parse(localStorage.getItem("cbct-opt:settings:v3") || "{}").theme || "dark";
+        if (theme !== "auto") document.documentElement.dataset.theme = theme;
+      } catch (e) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Stomatologik CBCT apparati qismlarini almashtirish va ta'mirlash xarajatlarini dinamik dasturlash asosida optimallashtirish" />
     <meta name="theme-color" content="#f2f5f7" media="(prefers-color-scheme: light)" />
