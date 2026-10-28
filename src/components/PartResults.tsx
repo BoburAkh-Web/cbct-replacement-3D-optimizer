@@ -144,14 +144,15 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
         </div>
       )}
 
+      {/* Ikkala jadval ustma-ust, to'liq kenglikda — qiymatlar gorizontal surmasdan ko'rinadi */}
       {view === "hisob" && (
-        <div className="grid2">
+        <div className="stack">
           {/* c(i,j) */}
           <div className="card">
             <h2>{t.segTitle}</h2>
             <p className="sub">c(i, j) = P<sub>i+1</sub> + R<sub>j−i</sub> − V<sub>j−i</sub>. {t.segSub}</p>
             <div className="tw">
-              <table className="sticky1">
+              <table className="sticky1 math">
                 <thead>
                   <tr>
                     <th className="n">i \ j</th>
@@ -179,7 +180,7 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
             <h2>{t.bellTitle}</h2>
             <p className="sub">f(N) = 0, &nbsp; f(i) = min<sub>j&gt;i</sub> [ c(i, j) + f(j) ], i = N−1, …, 0. {t.bellSub}</p>
             <div className="tw">
-              <table className="sticky1">
+              <table className="sticky1 math">
                 <thead>
                   <tr><th className="n">i</th><th className="n">f(i)</th><th className="n">{t.thBest}</th><th className="l">{t.thCalc}</th></tr>
                 </thead>
@@ -192,9 +193,14 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
                         <td className="n">{i}</td>
                         <td className="n"><b>{fmt(f[i])}</b></td>
                         <td className="n">{next[i].join(", ")}</td>
+                        {/* Har nomzod alohida bo'lak: joy yetmasa faqat nomzodlar orasidan ko'chadi; tanlangan j ajratilgan */}
                         <td className="num calc">
-                          {shown.map((o) => `j=${o.j}: ${fmt(C[i][o.j])}+${fmt(f[o.j])}=${fmt(o.value)}`).join("; ")}
-                          {candidates[i].length > 3 ? " …" : ""}
+                          {shown.map((o) => (
+                            <span key={o.j} className={next[i].includes(o.j) ? "cand win" : "cand"}>
+                              j={o.j}: {fmt(C[i][o.j])} + {fmt(f[o.j])} = {fmt(o.value)}
+                            </span>
+                          ))}
+                          {candidates[i].length > 3 && <span className="cand">…</span>}
                         </td>
                       </tr>
                     );
