@@ -14,7 +14,7 @@ Magistrlik dissertatsiyasi: *“Korxonalarda jihozlarni almashtirish va taʼmirl
 - Muntazam (har T yilda) almashtirish va almashtirmaslik bilan solishtirish
 - Kengaytma: R ni nosozlik ehtimoli va bekor turish yoʻqotishi orqali hisoblash
 - Butun apparat boʻyicha xulosa va yillik xarajatlar matritsasi
-- Jadvallarni Excelga nusxalash; asosiy pul birligi — soʻm (namunalar 1 $ ≈ 11 800 soʻm kursida, oʻrta sinf ~$60 000 lik apparat asosida), $ ham tanlanadi
+- Jadvallarni Excelga nusxalash; asosiy pul birligi — soʻm. `$` tanlansa barcha summalar, grafiklar va kiritish kataklari 1 $ = 11 800 soʻm kursi boʻyicha dollarga oʻtadi (hisob ichida soʻmda qoladi)
 - Interfeys tili: oʻzbekcha va ruscha (appbar dagi UZ / RU)
 - Maʼlumotlar brauzerda (localStorage) saqlanadi
 
@@ -82,4 +82,4 @@ git push -u origin main
 
 Vercel: **Add New → Project → GitHub repo'ni tanlash → Deploy**. Vite avtomatik aniqlanadi (Build: `npm run build`, Output: `dist`), qoʻshimcha sozlash kerak emas.
 
-> Eslatma: `src/data/samples.ts` dagi barcha raqamlar namunaviy. Klinika maʼlumotlari olinganda shu faylni yangilang yoki qiymatlarni dasturning oʻzida kiriting.
+> Eslatma: `src/data/samples.ts` dagi raqamlar klinikadagi **Eighteeth FinScan F350** apparati (35 000 $ ga yangi olingan) asosida **baholangan** namunaviy qiymatlar. Ular ochiq manbalardagi ulushlar va xizmat muddatlariga tayanadi, ishlab chiqaruvchining rasmiy narx roʻyxati emas. Baholash usuli va manbalar roʻyxati dasturdagi "Matematik model" sahifasida. Klinikaning haqiqiy hisob-fakturalari olinganda shu faylni yangilang yoki qiymatlarni dasturning oʻzida kiriting.

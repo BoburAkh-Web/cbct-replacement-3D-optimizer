@@ -75,6 +75,11 @@ nav.tabs a[aria-current="page"]{color:var(--fg)}
 nav.tabs a[aria-current="page"] svg{opacity:1;color:var(--accent)}
 .tools{display:flex;gap:8px;align-items:center}
 .tools select{min-height:34px;padding:5px 8px;font-size:13px}
+/* Valyuta tanlagich ostida kurs izohi: "1 $ = 11 800 so'm" */
+.cur-box{display:flex;flex-direction:column;align-items:center;gap:1px}
+.rate-note{font-size:10.5px;line-height:1.2;color:var(--fg-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.sheet-row .rate-note{font-size:12px}
+@media (pointer:fine){.tools .cur-box select{min-height:30px;padding-block:3px}}
 .seg.lang button{min-height:28px;padding:4px 9px;font-size:12px;font-weight:600;letter-spacing:.04em}
 .iconbtn{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);cursor:pointer;color:var(--fg-2)}
 .iconbtn:hover{color:var(--fg);background:var(--surface-2)}
@@ -216,6 +221,7 @@ table.sticky1 tr.best > :first-child{background:var(--opt-soft)}
 .prose h3{margin-top:8px;color:var(--accent)}
 .prose p{margin:0}
 .prose ol,.prose ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.sources small{display:block;color:var(--fg-3);font-size:12px}
 a.link{color:var(--accent);text-underline-offset:2px}
 .dimmed{opacity:.35;pointer-events:none}
 
@@ -322,6 +328,7 @@ a.link{color:var(--accent);text-underline-offset:2px}
 /* Sensorli ekran: iOS input fokusida sahifani kattalashtirmasligi uchun 16px, barmoqqa qulay balandlik */
 @media (max-width:760px), (pointer:coarse){
   select,input[type=text],.inp input,.tools select{font-size:16px}
+  .inp input{min-width:124px}
   .btn,select,input[type=text],.tools select{min-height:42px}
   .seg button{min-height:40px}
   .iconbtn{width:42px;height:42px}

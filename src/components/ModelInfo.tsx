@@ -1,13 +1,60 @@
 import { useT } from "../i18n";
+import { USD_UZS } from "../data/samples";
+import { fmt } from "../lib/format";
 
 /* Formulalar ikkala tilda bir xil */
 const segFormula = <div className="formula">c(i, j) = P<sub>i+1</sub> + R<sub>j−i</sub> − V<sub>j−i</sub>, &nbsp;&nbsp; 0 ≤ i &lt; j ≤ N</div>;
 const bellmanFormula = <div className="formula">f(N) = 0, &nbsp;&nbsp; f(i) = min<sub>i&lt;j≤N</sub> {"{"} c(i, j) + f(j) {"}"}, &nbsp;&nbsp; i = N−1, N−2, …, 0</div>;
 const riskFormula = <div className="formula">R<sub>k</sub> = Σ<sub>m=1..k</sub> [ r<sub>m</sub> + P<sub>f</sub>(m) · (C<sub>f</sub> + C<sub>d</sub> · t<sub>d</sub>) ]</div>;
 
+/* Namunaviy ma'lumotlar manbalari (samples.ts dagi baholash shularga tayanadi); nomlari lug'atda */
+const SOURCES = [
+  { key: "srcFda", url: "https://fda.innolitics.com/device/K242805" },
+  { key: "srcCatalog", url: "https://goldident.ru/upload/iblock/c75/4g4338g927gteraacpw8qt03xqlqsoey/FinScan-F350-Catalog-ENG_compressed.pdf" },
+  { key: "srcTube", url: "https://www.dentalti.com/post/how-much-does-a-cbct-machine-cost-a-buyer-s-guide-for-dental-practices" },
+  { key: "srcDetector", url: "https://www.intraoralscanners.cn/cbct-machine-cost/" },
+  { key: "srcService", url: "https://biologyinsights.com/how-much-does-a-cbct-machine-actually-cost/" },
+  { key: "srcContract", url: "https://www.duraprohealth.com/blog/dental-news-1/2025-dental-cbct-costs-what-you-need-to-know-before-buying-530" },
+  { key: "srcLifetime", url: "https://www.umymedical.com/the-ultimate-dental-cbct-machine-buying-guide-costs-fov-specs-roi/" },
+] as const;
+
 export default function ModelInfo() {
   const t = useT();
-  return t.lang === "ru" ? <ModelRu /> : <ModelUz />;
+  return (
+    <>
+      {t.lang === "ru" ? <ModelRu /> : <ModelUz />}
+      <DataSources />
+    </>
+  );
+}
+
+function DataSources() {
+  const t = useT();
+  return (
+    <div className="card prose">
+      <h2>{t.srcTitle}</h2>
+      <p>{t.srcDevice}</p>
+      <h3>{t.srcMethodTitle}</h3>
+      <ul>
+        <li>{t.srcM1}</li>
+        <li>{t.srcM2}</li>
+        <li>{t.srcM3}</li>
+        <li>{t.srcM4(fmt(USD_UZS))}</li>
+      </ul>
+      <p className="note">{t.srcWarn}</p>
+      <h3>{t.srcListTitle}</h3>
+      <ol className="sources">
+        {SOURCES.map((s) => (
+          <li key={s.url}>
+            <a className="link" href={s.url} target="_blank" rel="noopener">
+              {t[s.key]}
+            </a>
+            <small>{new URL(s.url).hostname.replace(/^www\./, "")}</small>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
 }
 
 function ModelUz() {

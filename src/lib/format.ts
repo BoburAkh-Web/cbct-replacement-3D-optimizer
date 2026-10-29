@@ -2,6 +2,9 @@ export type Currency = "$" | "soʻm";
 
 const nf = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
 
+/** 2 xonagacha yaxlitlash: dollar ko'rinishi va Excel nusxasi uchun (fmt ham shunday yaxlitlaydi) */
+export const round2 = (x: number) => Math.round(x * 100) / 100;
+
 /** 23650 → "23 650" */
 export function fmt(x: number): string {
   return nf.format(Math.round(x * 100) / 100).replace(/ | /g, " ");

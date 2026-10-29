@@ -1,6 +1,7 @@
 import { replacementYears } from "../lib/model";
 import { computePart, type Part, type PartResult } from "../lib/parts";
-import { copyTSV, fmt, pathStr, type Currency } from "../lib/format";
+import { copyTSV, fmt, pathStr, round2, type Currency } from "../lib/format";
+import { rateOf, scaleComputed } from "../lib/currency";
 import { useT } from "../i18n";
 import { ShareChart } from "./charts";
 
@@ -16,9 +17,10 @@ interface Props {
 
 export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
   const t = useT();
-  // Tekshiruv (darslik) misoli apparat xulosasiga kirmaydi
+  // Tekshiruv (darslik) misoli apparat xulosasiga kirmaydi. Hisob so'mda, natijalar tanlangan valyutaga o'tkaziladi
+  const rate = rateOf(cur);
   const rows = parts
-    .map((p, idx) => ({ p, idx, c: computePart(p) }))
+    .map((p, idx) => ({ p, idx, c: scaleComputed(computePart(p), rate) }))
     .filter((r) => !r.p.test);
   const ok = rows.flatMap((r) => (r.c.error === null ? [{ p: r.p, idx: r.idx, res: r.c.result as PartResult }] : []));
 
@@ -35,15 +37,15 @@ export default function Summary({ view, parts, cur, onOpen, notify }: Props) {
   const copySummary = () =>
     copy([
       ["№", t.thPart, t.thPeriodYears, t.thOptPath, t.thReplYears, t.kMin, t.noReplace, t.kSaving],
-      ...ok.map(({ p, idx, res }) => [idx + 1, t.partName(p), res.N, res.paths.map(pathStr).join(" | "), repStr(res), res.min, res.noReplace, res.noReplace - res.min]),
-      ["", t.total, "", "", "", total, totalNone, totalNone - total],
+      ...ok.map(({ p, idx, res }) => [idx + 1, t.partName(p), res.N, res.paths.map(pathStr).join(" | "), repStr(res), round2(res.min), round2(res.noReplace), round2(res.noReplace - res.min)]),
+      ["", t.total, "", "", "", round2(total), round2(totalNone), round2(totalNone - total)],
     ]);
 
   const copyMatrix = () =>
     copy([
       [t.thPart, ...yearCols.map(t.yearN), t.total],
-      ...ok.map(({ p, res }) => [t.partName(p), ...yearCols.map((y) => res.years[y - 1]?.net ?? ""), res.min]),
-      [t.byDevice, ...colSum, total],
+      ...ok.map(({ p, res }) => [t.partName(p), ...yearCols.map((y) => (res.years[y - 1] ? round2(res.years[y - 1].net) : "")), round2(res.min)]),
+      [t.byDevice, ...colSum.map(round2), round2(total)],
     ]);
 
   return (

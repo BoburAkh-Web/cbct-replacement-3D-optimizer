@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { SAMPLE_PARTS, TEST_PART } from "./data/samples";
+import { SAMPLE_PARTS, TEST_PART, USD_UZS } from "./data/samples";
 import { computePart, getR, isPartArray, makePart, type Part } from "./lib/parts";
-import type { Currency } from "./lib/format";
+import { fmt, type Currency } from "./lib/format";
 import { withTransition } from "./lib/transition";
 import { usePersistentState } from "./hooks/usePersistentState";
 import { navigate, useHashRoute } from "./hooks/useHashRoute";
@@ -76,8 +76,8 @@ const SECTIONS: Section[] = [
 const PATHS = SECTIONS.flatMap((s) => s.pages.map((p) => p.path));
 const HOME = PATHS[0];
 
-// parts v3: real narxlarga yaqin namunalar (v2 dagi eski namunalar brauzerda tegilmay qoladi)
-// settings v3: asosiy mavzu qorong'i (kalit index.html dagi mavzu skriptida ham ishlatiladi)
+// v4: namunalar klinikadagi FinScan F350 apparati asosida, $ endi haqiqiy konvertatsiya (v3 dagi eski ma'lumot brauzerda tegilmay qoladi).
+// Sozlamalar kaliti index.html dagi mavzu skriptida ham ishlatiladi; asosiy mavzu qorong'i.
 const defaultParts = () => SAMPLE_PARTS.map((s) => makePart(s));
 const defaultSettings = (): Settings => ({ sel: 0, cur: "soʻm", theme: "dark", lang: "uz" });
 const isSettings = (x: unknown): x is Settings => {
@@ -92,8 +92,8 @@ const isSettings = (x: unknown): x is Settings => {
 };
 
 export default function App() {
-  const [parts, setParts] = usePersistentState<Part[]>("cbct-opt:parts:v3", defaultParts, isPartArray);
-  const [settings, setSettings] = usePersistentState<Settings>("cbct-opt:settings:v3", defaultSettings, isSettings);
+  const [parts, setParts] = usePersistentState<Part[]>("cbct-opt:parts:v4", defaultParts, isPartArray);
+  const [settings, setSettings] = usePersistentState<Settings>("cbct-opt:settings:v4", defaultSettings, isSettings);
   const [toast, setToast] = useState<string | null>(null);
   const [confirmAll, setConfirmAll] = useState(false);
   const [sheet, setSheet] = useState(false);
@@ -154,6 +154,7 @@ export default function App() {
       ))}
     </div>
   );
+  const rateNote = t.rateNote(fmt(USD_UZS));
   const curSelect = (id: string) => (
     <select id={id} aria-label={t.curAria} value={settings.cur} onChange={(e) => setSettings((s) => ({ ...s, cur: e.target.value as Currency }))}>
       <option value="soʻm">{t.curSom}</option>
@@ -241,6 +242,7 @@ export default function App() {
         <PartPanel
           parts={parts}
           sel={sel}
+          cur={settings.cur}
           error={computed.error}
           onSelect={setSel}
           onChange={updatePart}
@@ -305,7 +307,10 @@ export default function App() {
           {/* Kompyuter: sozlamalar appbar ichida */}
           <div className="tools">
             {langSeg}
-            {curSelect("curSel")}
+            <div className="cur-box">
+              {curSelect("curSel")}
+              <small className="rate-note">{rateNote}</small>
+            </div>
             <button
               className="iconbtn"
               title={t.themeTitle(t[curTheme.label], t[nextTheme.label])}
@@ -348,6 +353,7 @@ export default function App() {
             <div className="sheet-row">
               <label htmlFor="curSheet">{t.curAria}</label>
               {curSelect("curSheet")}
+              <small className="rate-note">{rateNote}</small>
             </div>
             <div className="sheet-row">
               <span>{t.themeLabel}</span>

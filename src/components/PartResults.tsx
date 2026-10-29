@@ -1,6 +1,7 @@
 import { replacementYears } from "../lib/model";
 import type { PartResult } from "../lib/parts";
-import { copyTSV, fmt, pathStr, type Currency } from "../lib/format";
+import { copyTSV, fmt, pathStr, round2, type Currency } from "../lib/format";
+import { rateOf, scaleResult } from "../lib/currency";
 import { useT } from "../i18n";
 import { DagChart, IntervalChart, YearChart } from "./charts";
 
@@ -16,7 +17,8 @@ interface Props {
 
 export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
   const t = useT();
-  const { N, C, f, next, candidates, paths, min, years, noReplace, intervals } = res;
+  // Hisob so'mda; bu yerdan pastdagi barcha summalar (KPI, jadvallar, grafiklar, Excel) tanlangan valyutada
+  const { N, C, f, next, candidates, paths, min, years, noReplace, intervals } = scaleResult(res, rateOf(cur));
   const best = paths[0];
   const saving = noReplace - min;
   const repYears = replacementYears(best);
@@ -30,8 +32,8 @@ export default function PartResults({ view, res, cur, dimmed, notify }: Props) {
   const copyYears = async () => {
     const ok = await copyTSV([
       [t.thYear, t.thDecision, t.thAge, t.thBuy, t.thRep, t.thSalv, t.thNet, t.thCum],
-      ...years.map((r) => [r.year, r.isPurchase ? t.tagNew : t.tagRep, r.age, r.buy, r.repair, -r.salvage, r.net, r.cumulative]),
-      [t.total, "", "", sum("buy"), sum("repair"), -sum("salvage"), sum("net"), ""],
+      ...years.map((r) => [r.year, r.isPurchase ? t.tagNew : t.tagRep, r.age, round2(r.buy), round2(r.repair), round2(-r.salvage), round2(r.net), round2(r.cumulative)]),
+      [t.total, "", "", round2(sum("buy")), round2(sum("repair")), round2(-sum("salvage")), round2(sum("net")), ""],
     ]);
     notify(ok ? t.toastCopied : t.toastCopyFail);
   };

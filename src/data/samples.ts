@@ -1,13 +1,20 @@
 /**
- * NAMUNAVIY ma'lumotlar (so'mda). Bular klinika ma'lumotlari EMAS —
- * dasturni ko'rsatish uchun tuzilgan taxminiy qiymatlar: dollardagi bozor
- * narxlari USD_UZS kursi bo'yicha so'mga o'girilgan. Haqiqiy ma'lumot
- * olinganda dasturning o'zida katakchalarga yoziladi yoki shu fayl yangilanadi.
+ * NAMUNAVIY ma'lumotlar (so'mda) — klinikadagi real apparat asosida BAHOLANGAN qiymatlar.
+ * Apparat: Eighteeth FinScan F350 (Changzhou Finno Medical, FDA 510(k) K242805),
+ * ichida Canon rentgen naychasi va CsI + TFT flat-panel detektor. 35 000 $ ga yangi olingan,
+ * shuning uchun hisob har bir qism uchun "yangi qism" holatidan boshlanadi.
  *
- * Mo'ljal: o'rta sinf stomatologik CBCT apparati (~$60 000, yangi apparatlar
- * bozorda taxminan $30 000–150 000). Qismlar narxi apparat narxidan ancha past
- * (jami ~$25 000), har yili ~2–3% qimmatlashadi; ta'mir xarajati yosh bilan tez o'sadi.
- * Rentgen naychasi odatda 5–7 yil, detektor 10 yil va undan ko'p ishlaydi.
+ * Qiymatlar qanday tuzilgan:
+ *  - Asos: apparat narxi 35 000 $. Qism narxlari bozor ma'lumotlaridagi ulushlar bo'yicha baholangan:
+ *    naycha bloki ~17%, detektor ~28%, qolganlari 1–6%. Qismlar jami ~24 250 $ (~69%).
+ *  - P — yiliga 2,5% oshadi.
+ *  - V — qism turiga qarab eksponensial pasayadi.
+ *  - R — yig'ma qiymat. Birinchi 2 yil kafolat davri deb olingan (faqat rejali xizmat),
+ *    keyin yillik ta'mir har yili 38–60% ga o'sadi.
+ *  - Bu qiymatlar ochiq manbalar asosidagi baholash, ishlab chiqaruvchining rasmiy narx ro'yxati emas.
+ *    Manbalar ro'yxati "Matematik model" sahifasida (ModelInfo → DataSources).
+ * Dollardagi qiymatlar USD_UZS kursi bo'yicha so'mga o'giriladi. Haqiqiy ma'lumot olinganda
+ * dasturning o'zida katakchalarga yoziladi yoki shu fayl yangilanadi.
  *
  * P — i-yil boshida yangi qism narxi
  * V — k yil ishlatilgandagi qoldiq qiymat
@@ -35,16 +42,16 @@ const fromUsd = (s: Omit<SampleSource, "Cd">): SampleSource => ({ ...s, P: som(s
 
 // Qiymatlar dollarda yozilgan, fromUsd ularni so'mga o'giradi
 export const SAMPLE_PARTS: SampleSource[] = [
-  fromUsd({ name: "Rentgen naychasi", nameRu: "Рентгеновская трубка", N: 10, P: [5500, 5650, 5800, 5950, 6100, 6250, 6400, 6550, 6700, 6850], V: [2200, 1500, 1000, 650, 400, 250, 150, 100, 50, 0], R: [150, 350, 650, 1100, 1800, 2800, 4200, 6100, 8600, 11800], td: 7 }),
-  fromUsd({ name: "Detektor (flat-panel)", nameRu: "Детектор (плоскопанельный)", N: 10, P: [12000, 12300, 12600, 12900, 13200, 13500, 13800, 14100, 14400, 14700], V: [6000, 4500, 3400, 2600, 2000, 1500, 1100, 800, 600, 400], R: [100, 250, 500, 900, 1500, 2400, 3700, 5500, 7900, 11000], td: 10 }),
-  fromUsd({ name: "Aylanish mexanizmi va podshipniklar", nameRu: "Механизм вращения и подшипники", N: 8, P: [900, 920, 950, 970, 1000, 1020, 1050, 1080], V: [450, 320, 220, 150, 100, 70, 50, 30], R: [40, 100, 190, 320, 500, 750, 1090, 1540], td: 4 }),
-  fromUsd({ name: "Elektr dvigateli", nameRu: "Электродвигатель", N: 8, P: [650, 670, 690, 710, 730, 750, 770, 790], V: [320, 230, 160, 110, 80, 50, 40, 30], R: [30, 75, 145, 245, 385, 575, 835, 1185], td: 3 }),
-  fromUsd({ name: "Elektron plata va quvvat manbai", nameRu: "Электронная плата и блок питания", N: 10, P: [2400, 2450, 2500, 2550, 2600, 2650, 2700, 2750, 2800, 2850], V: [1200, 850, 600, 420, 300, 200, 150, 100, 70, 50], R: [60, 150, 290, 500, 800, 1220, 1800, 2590, 3640, 5020], td: 5 }),
-  fromUsd({ name: "Kolimator va nur cheklash mexanizmi", nameRu: "Коллиматор и механизм ограничения пучка", N: 8, P: [1200, 1230, 1260, 1290, 1320, 1350, 1380, 1410], V: [650, 470, 340, 250, 180, 130, 90, 60], R: [40, 100, 190, 320, 510, 780, 1160, 1680], td: 3 }),
-  fromUsd({ name: "Pozitsiyalash sensorlari", nameRu: "Датчики позиционирования", N: 6, P: [300, 310, 320, 330, 340, 350], V: [140, 90, 55, 35, 20, 10], R: [20, 50, 95, 160, 255, 390], td: 2 }),
-  fromUsd({ name: "Sovutish tizimi", nameRu: "Система охлаждения", N: 6, P: [450, 460, 475, 490, 500, 515], V: [220, 140, 90, 55, 35, 20], R: [25, 70, 150, 290, 520, 880], td: 2 }),
-  fromUsd({ name: "Kabellar va ulagichlar", nameRu: "Кабели и разъёмы", N: 6, P: [250, 255, 260, 270, 275, 280], V: [100, 60, 35, 20, 10, 5], R: [15, 45, 105, 215, 395, 675], td: 1 }),
-  fromUsd({ name: "Kompyuter va tasvirni qayta ishlash tizimi", nameRu: "Компьютер и система обработки изображений", N: 7, P: [1800, 1800, 1750, 1750, 1700, 1700, 1650], V: [1000, 650, 400, 250, 150, 80, 40], R: [60, 170, 350, 630, 1050, 1670, 2570], td: 2 }),
+  fromUsd({ name: "Rentgen naychasi", nameRu: "Рентгеновская трубка", N: 10, P: [6000, 6150, 6300, 6450, 6600, 6800, 6950, 7150, 7300, 7500], V: [3600, 2590, 1865, 1345, 965, 695, 500, 360, 260, 185], R: [60, 120, 370, 745, 1310, 2150, 3415, 5315, 8165, 12435], td: 7 }),
+  fromUsd({ name: "Detektor (flat-panel)", nameRu: "Детектор (плоскопанельный)", N: 10, P: [10000, 10250, 10500, 10750, 11050, 11300, 11600, 11900, 12200, 12500], V: [6500, 5200, 4160, 3330, 2660, 2130, 1705, 1365, 1090, 870], R: [80, 160, 410, 755, 1230, 1890, 2795, 4045, 5775, 8155], td: 10 }),
+  fromUsd({ name: "Aylanish mexanizmi va podshipniklar", nameRu: "Механизм вращения и подшипники", N: 8, P: [1400, 1450, 1450, 1500, 1550, 1600, 1600, 1650], V: [770, 540, 375, 265, 185, 130, 90, 65], R: [30, 60, 150, 280, 470, 745, 1140, 1720], td: 4 }),
+  fromUsd({ name: "Elektr dvigateli", nameRu: "Электродвигатель", N: 8, P: [900, 920, 950, 970, 990, 1000, 1050, 1050], V: [495, 355, 255, 185, 135, 95, 70, 50], R: [20, 40, 100, 185, 315, 495, 760, 1145], td: 3 }),
+  fromUsd({ name: "Elektron plata va quvvat manbai", nameRu: "Электронная плата и блок питания", N: 10, P: [2100, 2150, 2200, 2250, 2300, 2400, 2450, 2500, 2550, 2600], V: [1155, 865, 650, 485, 365, 275, 205, 155, 115, 85], R: [30, 60, 170, 325, 550, 865, 1310, 1945, 2845, 4130], td: 5 }),
+  fromUsd({ name: "Kolimator va nur cheklash mexanizmi", nameRu: "Коллиматор и механизм ограничения пучка", N: 8, P: [1000, 1000, 1050, 1100, 1100, 1150, 1150, 1200], V: [600, 450, 340, 255, 190, 140, 105, 80], R: [20, 40, 100, 185, 315, 495, 760, 1145], td: 3 }),
+  fromUsd({ name: "Pozitsiyalash sensorlari va lazer", nameRu: "Датчики позиционирования и лазер", N: 6, P: [350, 360, 370, 380, 390, 400], V: [175, 115, 75, 50, 30, 20], R: [10, 20, 50, 95, 160, 265], td: 2 }),
+  fromUsd({ name: "Sovutish tizimi", nameRu: "Система охлаждения", N: 6, P: [400, 410, 420, 430, 440, 450], V: [200, 130, 85, 55, 35, 25], R: [15, 30, 70, 130, 220, 355], td: 2 }),
+  fromUsd({ name: "Kabellar va ulagichlar", nameRu: "Кабели и разъёмы", N: 6, P: [300, 310, 320, 320, 330, 340], V: [120, 70, 45, 25, 15, 10], R: [10, 20, 50, 95, 160, 265], td: 1 }),
+  fromUsd({ name: "Kompyuter (ishchi stansiya)", nameRu: "Компьютер (рабочая станция)", N: 7, P: [1800, 1850, 1900, 1950, 2000, 2050, 2100], V: [990, 615, 380, 235, 145, 90, 55], R: [40, 80, 230, 470, 855, 1470, 2450], td: 2 }),
 ];
 
 /** Darslik (BMI namunasi) misoli — algoritmni tekshirish uchun. Kutilgan javob: 335, yo'l 0 → 2 → 6 → 10. */

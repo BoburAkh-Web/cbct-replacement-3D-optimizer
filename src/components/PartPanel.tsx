@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { getR, MAX_YEARS, MIN_YEARS, validate, type Part, type PartError } from "../lib/parts";
-import { fmt } from "../lib/format";
+import { fmt, round2, type Currency } from "../lib/format";
+import { rateOf } from "../lib/currency";
 import { useT } from "../i18n";
 
 interface Props {
   parts: Part[];
   sel: number;
+  cur: Currency;
   error: PartError | null;
   onSelect: (i: number) => void;
   onChange: (updater: (p: Part) => Part) => void;
@@ -18,30 +20,44 @@ interface Props {
 type ArrKey = "P" | "V" | "R" | "r" | "pf";
 
 // Bo'shliqlar olib tashlanadi: xonalarga ajratilgan "115 200 000" ham, nusxalangan qiymat ham to'g'ri o'qiladi
-const clean = (v: string) => v.replace(/s/g, "").replace(",", ".");
+const clean = (v: string) => v.replace(/\s/g, "").replace(",", ".");
 const isNum = (v: string) => v !== "" && Number.isFinite(Number(v));
 
-type NumInputProps = { value: string; onValue: (v: string) => void } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">;
+/** rate — pul kataklari uchun kurs (so'm = 1, dollar = USD_UZS); ehtimollik va kunlar uchun 1 */
+type NumInputProps = { value: string; onValue: (v: string) => void; rate?: number } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">;
 
-/** Fokusda xom qiymat, aks holda xonalarga ajratilgan: 115200000 → "115 200 000" */
-function NumInput({ value, onValue, className = "", ...rest }: NumInputProps) {
-  const [focused, setFocused] = useState(false);
+/**
+ * Qiymat so'mda saqlanadi, tanlangan valyutada ko'rsatiladi: ko'rinish = so'm / rate, yozilgani → so'm = qiymat × rate.
+ * Fokusda tahrirlanayotgan matn (draft) alohida turadi — "12." kabi oraliq yozuv kurs bo'yicha qayta hisoblanib buzilmaydi.
+ * Draft qaysi kursda yozilgani bilan saqlanadi: valyuta almashsa eski draft ko'rsatilmaydi.
+ * Faqat foydalanuvchi yozganda saqlanadi: shunchaki bosib chiqilsa saqlangan so'm qiymati yaxlitlanib o'zgarmaydi.
+ * Fokusdan tashqarida xonalarga ajratilgan: 115200000 → "115 200 000".
+ */
+function NumInput({ value, onValue, rate = 1, className = "", ...rest }: NumInputProps) {
+  const [draft, setDraft] = useState<{ text: string; rate: number } | null>(null);
   const ok = isNum(value);
+  const view = ok ? (rate === 1 ? Number(value) : round2(Number(value) / rate)) : null;
+  const text = draft && draft.rate === rate ? draft.text : null;
   return (
     <input
       {...rest}
       className={`${className} ${ok ? "" : "err"}`.trim()}
       inputMode="decimal"
-      value={focused || !ok ? value : fmt(Number(value))}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
-      onChange={(e) => onValue(e.target.value)}
+      value={text ?? (view === null ? value : fmt(view))}
+      onFocus={() => setDraft({ text: view === null || rate === 1 ? value : String(view), rate })}
+      onBlur={() => setDraft(null)}
+      onChange={(e) => {
+        setDraft({ text: e.target.value, rate });
+        const v = clean(e.target.value);
+        onValue(rate === 1 || !isNum(v) ? v : String(round2(Number(v) * rate)));
+      }}
     />
   );
 }
 
-export default function PartPanel({ parts, sel, error, onSelect, onChange, onAdd, onDelete, onReset, notify }: Props) {
+export default function PartPanel({ parts, sel, cur, error, onSelect, onChange, onAdd, onDelete, onReset, notify }: Props) {
   const t = useT();
+  const rate = rateOf(cur);
   const part = parts[sel];
   const [renaming, setRenaming] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
@@ -85,7 +101,7 @@ export default function PartPanel({ parts, sel, error, onSelect, onChange, onAdd
       </th>
       {cols.map((i) => (
         <td key={i}>
-          <NumInput id={`in-${key}-${i}`} value={arr[i] ?? ""} aria-label={`${key} ${i + 1}`} onValue={(v) => setCell(key, i, v)} />
+          <NumInput id={`in-${key}-${i}`} value={arr[i] ?? ""} rate={key === "pf" ? 1 : rate} aria-label={`${key} ${i + 1}`} onValue={(v) => setCell(key, i, v)} />
         </td>
       ))}
     </tr>
@@ -174,7 +190,9 @@ export default function PartPanel({ parts, sel, error, onSelect, onChange, onAdd
       )}
 
       <div className="head">
-        <h2>{t.inputTitle}</h2>
+        <h2>
+          {t.inputTitle} <span className="sub">· {cur === "$" ? "$" : t.curSom}</span>
+        </h2>
         <div className="field fieldrow">
           <span>{t.rRow}</span>
           <div className="seg" role="group" aria-label={t.rModeAria}>
@@ -224,7 +242,7 @@ export default function PartPanel({ parts, sel, error, onSelect, onChange, onAdd
                     <span>{t.hRcalc}</span>
                   </th>
                   {cols.map((i) => (
-                    <td key={i} className="ro">{computedR ? fmt(computedR[i]) : "—"}</td>
+                    <td key={i} className="ro">{computedR ? fmt(computedR[i] / rate) : "—"}</td>
                   ))}
                 </tr>
               </>
@@ -237,11 +255,11 @@ export default function PartPanel({ parts, sel, error, onSelect, onChange, onAdd
         <div className="controls">
           <div className="field">
             <label htmlFor="cf">C<sub>f</sub> — {t.lCf}</label>
-            <NumInput type="text" id="cf" className="num ext-input" value={part.ext.Cf} onValue={(v) => setExt("Cf", v)} />
+            <NumInput type="text" id="cf" className="num ext-input" value={part.ext.Cf} rate={rate} onValue={(v) => setExt("Cf", v)} />
           </div>
           <div className="field">
             <label htmlFor="cd">C<sub>d</sub> — {t.lCd}</label>
-            <NumInput type="text" id="cd" className="num ext-input" value={part.ext.Cd} onValue={(v) => setExt("Cd", v)} />
+            <NumInput type="text" id="cd" className="num ext-input" value={part.ext.Cd} rate={rate} onValue={(v) => setExt("Cd", v)} />
           </div>
           <div className="field">
             <label htmlFor="td">t<sub>d</sub> — {t.ltd}</label>

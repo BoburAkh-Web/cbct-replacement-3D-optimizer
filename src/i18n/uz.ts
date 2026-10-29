@@ -9,6 +9,7 @@ export const uz = {
   money: (x: number, cur: Currency) => nb(cur === "$" ? `$${fmt(x)}` : `${fmt(x)} soʻm`),
   curSom: "soʻm",
   curUsd: "$ dollar",
+  rateNote: (rate: string) => `1 $ = ${rate} soʻm`,
   /** Namunaviy qism nomi tarjima qilinadi, foydalanuvchi bergan nom o'zgarmaydi */
   partName: (p: Part) => p.name,
   years: (n: number) => `${n} yil`,
@@ -186,4 +187,24 @@ export const uz = {
   aNet: "Atsiklik toʻr",
   netHint: "Ajratilgan yoylar — optimal yoʻl. Har bir yoyning c(i, j) qiymati «Bellman hisobi» sahifasidagi jadvalda.",
   aShare: "Qismlar ulushi",
+
+  // Matematik model → namunaviy ma'lumotlar manbasi
+  srcTitle: "Namunaviy maʼlumotlar manbasi",
+  srcDevice:
+    "Namunalar klinikadagi real apparat asosida tuzilgan: Eighteeth FinScan F350 (ishlab chiqaruvchi — Changzhou Finno Medical, FDA 510(k) K242805). Apparat ichida Canon rentgen naychasi va CsI + TFT flat-panel detektor bor. U 35 000 $ ga yangi holda olingan, shuning uchun hisob har bir qism uchun «yangi qism» holatidan boshlanadi.",
+  srcMethodTitle: "Qiymatlar qanday baholangan",
+  srcM1: "P — qism narxi: apparat narxining bozor maʼlumotlaridagi ulushlari boʻyicha baholangan (naycha bloki ~17%, detektor ~28%, qolgan qismlar 1–6%). Qismlar jami ~24 250 $, yaʼni apparat narxining ~69%. Narx har yili 2,5% ga oshadi.",
+  srcM2: "V — qoldiq qiymat: qism turiga qarab yillar davomida eksponensial pasayadi.",
+  srcM3: "R — yigʻma taʼmir xarajati: birinchi 2 yil kafolat davri deb olingan (faqat rejali xizmat), keyin yillik taʼmir xarajati har yili 38–60% ga oʻsadi.",
+  srcM4: (rate: string) => `Qiymatlar dollarda baholangan va 1 $ = ${rate} soʻm kursida soʻmga oʻtkazilgan (10 000 soʻmgacha yaxlitlangan).`,
+  srcWarn:
+    "Diqqat: bu qiymatlar ochiq manbalar asosidagi baholash, ishlab chiqaruvchining rasmiy narx roʻyxati emas. Klinikaning haqiqiy hisob-fakturalari va servis shartnomasi maʼlumotlari olinganda ular bilan almashtiriladi.",
+  srcListTitle: "Manbalar",
+  srcFda: "FDA 510(k) K242805 — FinScan F350 roʻyxatga olish maʼlumotlari",
+  srcCatalog: "FinScan F350 katalogi — Canon rentgen naychasi, CsI detektor",
+  srcTube: "Rentgen naychasini almashtirish — 15–40 ming $, har 3–7 yilda",
+  srcDetector: "Detektorni almashtirish va DQE (sezgirlik) pasayishi",
+  srcService: "Yillik texnik xizmat — apparat narxining 10–15%",
+  srcContract: "Servis shartnomasi — yiliga 1 500–5 000 $",
+  srcLifetime: "CBCT apparatining xizmat muddati — 7–10 yil",
 };
